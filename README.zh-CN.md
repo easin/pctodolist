@@ -78,6 +78,7 @@ $ git clone https://github.com/ant-design/ant-design-pro.git --depth=1
 $ cd ant-design-pro
 $ npm install
 $ npm start         # 访问 http://localhost:8000
+env PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true npm i puppeteer -D #跳过浏览器下载来编译
 ```
 
 ### 使用 docker
