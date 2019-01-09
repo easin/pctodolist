@@ -87,20 +87,33 @@ export default function request(url, option) {
     newOptions.method === 'PUT' ||
     newOptions.method === 'DELETE'
   ) {
-    if (!(newOptions.body instanceof FormData)) {
+
+
+    const isformRequestHeader = newOptions.headers["Content-Type"]&&newOptions.headers["Content-Type"].indexOf('form')>1
+    console.log(newOptions)
+      console.log(isformRequestHeader)
+    if (!(newOptions.body instanceof FormData)&&!isformRequestHeader) {
       newOptions.headers = {
         Accept: 'application/json',
-        'Content-Type': 'application/json; charset=utf-8',
+        'Content-Type': 'application/json; charset=utf-8', // 默认先都表单提单
         ...newOptions.headers,
       };
       newOptions.body = JSON.stringify(newOptions.body);
+      console.log('json request')
     } else {
+        console.log('form request')
       // newOptions.body is FormData
       newOptions.headers = {
         Accept: 'application/json',
         ...newOptions.headers,
       };
+      // newOptions.headers={'Content-Type': 'application/x-www-form-urlencoded', // 默认先都表单提单
+      //     ...newOptions.headers,}
     }
+      console.log('xxxxdata')
+      console.log(newOptions.body)
+    // 接着在这里继续加token
+
   }
 
   const expirys = options.expirys && 60;
