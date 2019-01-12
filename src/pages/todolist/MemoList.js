@@ -24,7 +24,7 @@ import {
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import Result from '@/components/Result';
 
-import styles from './BasicList.less';
+import styles from './MemoList.less';
 
 const FormItem = Form.Item;
 const RadioButton = Radio.Button;
@@ -37,7 +37,7 @@ const { Search, TextArea } = Input;
   loading: loading.models.list,
 }))
 @Form.create()
-class BasicList extends PureComponent {
+class MemoList extends PureComponent {
   state = { visible: false, done: false };
 
   formLayout = {
@@ -48,7 +48,7 @@ class BasicList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'list/fetch',
+      type: 'memo/fetch',
       payload: {
         count: 5,
       },
@@ -150,8 +150,8 @@ class BasicList extends PureComponent {
       <div className={styles.extraContent}>
         <RadioGroup defaultValue="all">
           <RadioButton value="all">全部</RadioButton>
-          <RadioButton value="progress">进行中</RadioButton>
-          <RadioButton value="waiting">等待中</RadioButton>
+          <RadioButton value="progress">未归档</RadioButton>
+          <RadioButton value="waiting">已归档</RadioButton>
         </RadioGroup>
         <Search className={styles.extraContentSearch} placeholder="请输入" onSearch={() => ({})} />
       </div>
@@ -337,4 +337,4 @@ class BasicList extends PureComponent {
   }
 }
 
-export default BasicList;
+export default MemoList;

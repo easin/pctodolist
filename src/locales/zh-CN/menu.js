@@ -1,6 +1,10 @@
 export default {
   'menu.home': '首页',
   'menu.dashboard': 'Dashboard',
+  'menu.task': '待办',
+  'menu.memo': '备忘',
+  'menu.habit': '习惯',
+  'menu.tag': '标签',
   'menu.dashboard.analysis': '分析页',
   'menu.dashboard.monitor': '监控页',
   'menu.dashboard.workplace': '工作台',

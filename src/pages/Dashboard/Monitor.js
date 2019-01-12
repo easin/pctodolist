@@ -62,7 +62,7 @@ class Monitor extends PureComponent {
                       />
                     }
                     suffix="元"
-                    total={numeral(124543233).format('0,0')}
+                    total={numeral(888843233111111111).format('0,0')}
                   />
                 </Col>
                 <Col md={6} sm={12} xs={24}>

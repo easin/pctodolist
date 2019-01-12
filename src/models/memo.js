@@ -1,27 +1,27 @@
 import { queryProjectNotice } from '@/services/api';
 
 export default {
-  namespace: 'project',
+  namespace: 'memo',
 
   state: {
-    notice: [],
+    memoPage: [],
   },
 
   effects: {
-    *fetchNotice(_, { call, put }) {
+    *fetchMemoList(_, { call, put }) {
       const response = yield call(queryProjectNotice);
       yield put({
-        type: 'saveNotice',
+        type: 'saveMemoPage',
         payload: Array.isArray(response) ? response : [],
       });
     },
   },
 
   reducers: {
-    saveNotice(state, action) {
+      saveMemoPage(state, action) {
       return {
         ...state,
-        notice: action.payload,
+          memoPage: action.payload,
       };
     },
   },

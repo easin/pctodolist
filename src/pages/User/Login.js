@@ -44,7 +44,7 @@ class LoginPage extends Component {
     if (!err) {
       const { dispatch } = this.props;
       dispatch({
-        type: 'login/login',
+        type: 'user/login',
         payload: {
           ...values,
           type,
@@ -82,8 +82,8 @@ class LoginPage extends Component {
               !submitting &&
               this.renderMessage(formatMessage({ id: 'app.login.message-invalid-credentials' }))}
             <UserName
-              name="userName"
-              placeholder={`${formatMessage({ id: 'app.login.userName' })}: admin or user`}
+              name="username"
+              placeholder={`${formatMessage({ id: 'app.login.userName' })}: 手机号码`}
               rules={[
                 {
                   required: true,

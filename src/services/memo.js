@@ -1,8 +1,11 @@
 import request from '@/utils/request';
 import { stringify } from 'qs';
 
-export async function query() {
-  return request('/api/users');
+export async function list(params) {
+  return request('/api/memo/list',{
+    method:'POST',
+
+  });
 }
 
 //  let formData = new FormData();

@@ -1,6 +1,23 @@
 // 代码中会兼容本地 service mock 以及部署站点的静态数据
+// https://pro.ant.design/docs/faq-cn
+// http://03x.pro.ant.design/docs/mock-api
+// 如何代理到后端服务器？#
+//     Ant Design Pro 内置了 umi，umi 使用了 webpack devServer来支持代理。 你只需要在 config.js 中配置 proxy 属性。只要 proxy 和 mock url 不同，是可以共存的。
+// 在浏览器中输入 http://localhost:8000/server/api/currentUser 预览。
+//
+// .roadhog.mock.js
+// https://v1.pro.ant.design/docs/server-cn
 export default {
   // 支持值为 Object 和 Array
+  // 'GET /api/user/login':'http://your.server.com/api/',
+
+
+// 'GET /api/(.*)': 'http://your.server.com/api/',
+
+    // Forward 到另一个服务器，并指定子路径
+    // 请求 /someDir/0.0.50/index.css 会被代理到 https://g.alicdn.com/tb-page/taobao-home, 实际返回 https://g.alicdn.com/tb-page/taobao-home/0.0.50/index.css
+    // 'GET /someDir/(.*)': 'https://g.alicdn.com/tb-page/taobao-home',
+
   'GET /api/currentUser': {
     name: 'Serati Ma',
     avatar: 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png',

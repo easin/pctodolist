@@ -87,12 +87,11 @@ export default function request(url, option) {
     newOptions.method === 'PUT' ||
     newOptions.method === 'DELETE'
   ) {
-
-
-    const isformRequestHeader = newOptions.headers["Content-Type"]&&newOptions.headers["Content-Type"].indexOf('form')>1
+    /*
+    const isFormRequestHeader = newOptions.headers["Content-Type"]&&newOptions.headers["Content-Type"].indexOf('form')>1
     console.log(newOptions)
-      console.log(isformRequestHeader)
-    if (!(newOptions.body instanceof FormData)&&!isformRequestHeader) {
+      console.log(isFormRequestHeader)
+    if (!(newOptions.body instanceof FormData)&&!isFormRequestHeader) {
       newOptions.headers = {
         Accept: 'application/json',
         'Content-Type': 'application/json; charset=utf-8', // 默认先都表单提单
@@ -110,10 +109,36 @@ export default function request(url, option) {
       // newOptions.headers={'Content-Type': 'application/x-www-form-urlencoded', // 默认先都表单提单
       //     ...newOptions.headers,}
     }
-      console.log('xxxxdata')
-      console.log(newOptions.body)
-    // 接着在这里继续加token
 
+    */
+    const isJsonRequest=newOptions.header&&newOptions.header === 'json';
+    if(isJsonRequest)
+    {
+        delete newOptions.header;
+    }
+    const isJson =
+      typeof obj === 'object' &&
+      Object.prototype.toString.call(newOptions.body).toLowerCase() === '[object object]' &&
+      !newOptions.body.length;
+    if (isJson||isJsonRequest) {
+      newOptions.headers = {
+        Accept: 'application/json',
+        'Content-Type': 'application/json; charset=utf-8', // 默认先都表单提单
+        ...newOptions.headers,
+      };
+      newOptions.body = JSON.stringify(newOptions.body);
+      console.log('json request');
+    } else {
+      console.log('form request');
+      // newOptions.body is FormData
+      newOptions.headers = {
+        Accept: 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
+        ...newOptions.headers,
+      };
+    }
+    console.log(newOptions.body);
+    // 接着在这里继续加token
   }
 
   const expirys = options.expirys && 60;
