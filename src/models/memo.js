@@ -1,24 +1,28 @@
-import { queryProjectNotice } from '@/services/api';
+import { list } from '@/services/memo';
 
 export default {
   namespace: 'memo',
 
   state: {
-    memoPage: [],
+    memoPage: {pageNo:1,pageSize:10,list:[]},
   },
 
   effects: {
-    *fetchMemoList(_, { call, put }) {
-      const response = yield call(queryProjectNotice);
-      yield put({
-        type: 'saveMemoPage',
-        payload: Array.isArray(response) ? response : [],
-      });
+    *fetchMemoList({ payload }, { call, put }) {
+      const result = yield call(list,payload);
+      if(result.success)
+      {
+          yield put({
+              type: 'appendMemoPage',
+              payload: result.object,
+          });
+      }
+
     },
   },
 
   reducers: {
-      saveMemoPage(state, action) {
+      appendMemoPage(state, action) {
       return {
         ...state,
           memoPage: action.payload,

@@ -4,7 +4,7 @@ import { stringify } from 'qs';
 export async function list(params) {
   return request('/api/memo/list',{
     method:'POST',
-
+    body:stringify(params),
   });
 }
 

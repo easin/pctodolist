@@ -32,9 +32,9 @@ const RadioGroup = Radio.Group;
 const SelectOption = Select.Option;
 const { Search, TextArea } = Input;
 
-@connect(({ list, loading }) => ({
-  list,
-  loading: loading.models.list,
+@connect(({ memo, loading }) => ({
+    memo,
+  loading: loading.models.memo,
 }))
 @Form.create()
 class MemoList extends PureComponent {
@@ -48,9 +48,9 @@ class MemoList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'memo/fetch',
+      type: 'memo/fetchMemoList',
       payload: {
-        count: 5,
+        pageSize: 2,
       },
     });
   }
@@ -113,7 +113,7 @@ class MemoList extends PureComponent {
 
   render() {
     const {
-      list: { list },
+      memoPage: { memoPage },
       loading,
     } = this.props;
     const {
@@ -125,8 +125,8 @@ class MemoList extends PureComponent {
       if (key === 'edit') this.showEditModal(currentItem);
       else if (key === 'delete') {
         Modal.confirm({
-          title: '删除任务',
-          content: '确定删除该任务吗？',
+          title: '删除备忘',
+          content: '确定删除该备忘吗？',
           okText: '确认',
           cancelText: '取消',
           onOk: () => this.deleteItem(currentItem.id),
@@ -213,9 +213,9 @@ class MemoList extends PureComponent {
       }
       return (
         <Form onSubmit={this.handleSubmit}>
-          <FormItem label="任务名称" {...this.formLayout}>
+          <FormItem label="备忘名称" {...this.formLayout}>
             {getFieldDecorator('title', {
-              rules: [{ required: true, message: '请输入任务名称' }],
+              rules: [{ required: true, message: '请输入备忘名称' }],
               initialValue: current.title,
             })(<Input placeholder="请输入" />)}
           </FormItem>
@@ -232,9 +232,9 @@ class MemoList extends PureComponent {
               />
             )}
           </FormItem>
-          <FormItem label="任务负责人" {...this.formLayout}>
+          <FormItem label="备忘负责人" {...this.formLayout}>
             {getFieldDecorator('owner', {
-              rules: [{ required: true, message: '请选择任务负责人' }],
+              rules: [{ required: true, message: '请选择备忘负责人' }],
               initialValue: current.owner,
             })(
               <Select placeholder="请选择">
@@ -255,19 +255,6 @@ class MemoList extends PureComponent {
     return (
       <PageHeaderWrapper>
         <div className={styles.standardList}>
-          <Card bordered={false}>
-            <Row>
-              <Col sm={8} xs={24}>
-                <Info title="我的待办" value="8个任务" bordered />
-              </Col>
-              <Col sm={8} xs={24}>
-                <Info title="本周任务平均处理时间" value="32分钟" bordered />
-              </Col>
-              <Col sm={8} xs={24}>
-                <Info title="本周完成任务数" value="24个任务" />
-              </Col>
-            </Row>
-          </Card>
 
           <Card
             className={styles.listCard}
@@ -295,7 +282,7 @@ class MemoList extends PureComponent {
               rowKey="id"
               loading={loading}
               pagination={paginationProps}
-              dataSource={list}
+              dataSource={memoPage.list}
               renderItem={item => (
                 <List.Item
                   actions={[
@@ -310,11 +297,6 @@ class MemoList extends PureComponent {
                     <MoreBtn current={item} />,
                   ]}
                 >
-                  <List.Item.Meta
-                    avatar={<Avatar src={item.logo} shape="square" size="large" />}
-                    title={<a href={item.href}>{item.title}</a>}
-                    description={item.subDescription}
-                  />
                   <ListContent data={item} />
                 </List.Item>
               )}
@@ -322,7 +304,7 @@ class MemoList extends PureComponent {
           </Card>
         </div>
         <Modal
-          title={done ? null : `任务${current ? '编辑' : '添加'}`}
+          title={done ? null : `备忘${current ? '编辑' : '添加'}`}
           className={styles.standardListForm}
           width={640}
           bodyStyle={done ? { padding: '72px 0' } : { padding: '28px 0 0' }}
