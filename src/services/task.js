@@ -1,0 +1,25 @@
+import request from '@/utils/request';
+import { stringify } from 'qs';
+
+export async function queryPage(params) {
+  return request('/api/task/page',{
+    method:'POST',
+    body:stringify(params),
+  });
+}
+
+
+export async function queryCurrent() {
+  return request('/api/currentUser');
+}
+
+export async function login(params) {
+  return request('/api/user/login', {
+    method: 'POST',
+    body: stringify(params),
+    // headers: {
+    //     'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
+    //     // 'Content-Type': 'multipart/form-data'
+    // },
+  });
+}

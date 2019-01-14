@@ -19,7 +19,7 @@ export default [
     routes: [
       // dashboard
       { path: '/', redirect: '/dashboard/analysis' },
-      {  path: '/task',name: 'task',icon:'bars',component: './Todolist/MemoList',},
+      {  path: '/task',name: 'task',icon:'bars',component: './Todolist/TaskList',},
       {  path: '/memo',name: 'memo',icon:'snippets',component: './Todolist/MemoList',},
       {  path: '/habit',name: 'habit',icon:'redo',component: './Dashboard/Analysis',},
       {  path: '/tag',name: 'tag',icon:'tags',component: './Dashboard/Analysis',},

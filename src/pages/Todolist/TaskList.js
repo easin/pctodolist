@@ -21,10 +21,10 @@ import {
   Select,
 } from 'antd';
 
-import PageHeaderWrapper from '@/components/PageHeaderWrapper';
+import GridContent from '@/components/PageHeaderWrapper/GridContent';
 import Result from '@/components/Result';
 
-import styles from './MemoList.less';
+import styles from './TaskList.less';
 
 const FormItem = Form.Item;
 const RadioButton = Radio.Button;
@@ -32,12 +32,12 @@ const RadioGroup = Radio.Group;
 const SelectOption = Select.Option;
 const { Search, TextArea } = Input;
 
-@connect(({ memo, loading }) => ({
-    memo,
-  loading: loading.models.memo,
+@connect(({ task, loading }) => ({
+    task,
+  loading: loading.models.task,
 }))
 @Form.create()
-class MemoList extends PureComponent {
+class TaskList extends PureComponent {
   state = { visible: false, done: false };
 
   formLayout = {
@@ -48,7 +48,7 @@ class MemoList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'memo/fetchMemoList',
+      type: 'task/fetchTaskList',
       payload: {
         pageSize: 2,
       },
@@ -115,14 +115,14 @@ class MemoList extends PureComponent {
 
 
     // const {
-    //   `memo.memoPage`: { memoPage },
+    //   `task.taskPage`: { taskPage },
     //   loading,
     // } = this.props;
     //   console.log(1111111)
-      // const {memoPage: { memoPage }}= this.props;
-      // console.log(memoPage)
-      const {memo: { memoPage },loading,}= this.props;
-      // console.log(memoPage)
+      // const {taskPage: { taskPage }}= this.props;
+      // console.log(taskPage)
+      const {task: { taskPage },loading,}= this.props;
+      // console.log(taskPage)
     const {
       form: { getFieldDecorator },
     } = this.props;
@@ -155,12 +155,34 @@ class MemoList extends PureComponent {
 
     const extraContent = (
       <div className={styles.extraContent}>
-        <RadioGroup defaultValue="all">
-          <RadioButton value="all">全部</RadioButton>
-          <RadioButton value="progress">未归档</RadioButton>
-          <RadioButton value="waiting">已归档</RadioButton>
+
+        <Button
+          type="dashed"
+          style={{ marginBottom: 8 }}
+          icon="plus"
+          onClick={this.showModal}
+          ref={component => {
+                  /* eslint-disable */
+                  this.addBtn = findDOMNode(component);
+                  /* eslint-enable */
+              }}
+        >
+              添加
+        </Button>
+
+
+          <Button type="primary" ghost onClick={()=>{}} icon="plus" style={{ lineHeight: '21px' }}>
+              添加待办
+          </Button>
+        <RadioGroup defaultValue="all" className={styles.extraContentSearchGap}>
+          <RadioButton value="all">全部含完成</RadioButton>
+          <RadioButton value="progress">待办</RadioButton>
         </RadioGroup>
-        <Search className={styles.extraContentSearch} placeholder="请输入" onSearch={() => ({})} />
+        <RadioGroup defaultValue="all" className={styles.extraContentSearchGap}>
+          <RadioButton value="all">全部含已归档</RadioButton>
+          <RadioButton value="progress">未归档</RadioButton>
+        </RadioGroup>
+        <Search className={[styles.extraContentSearch,styles.extraContentSearchGap]} placeholder="请输入" onSearch={() => ({})} />
       </div>
     );
 
@@ -171,11 +193,11 @@ class MemoList extends PureComponent {
       total: 50,
     };
 
-    const ListContent = ({ data: { content, createdTime, isArchived } }) => (
+    const ListContent = ({ data: { taskName, createdTime,endTime,status, isArchived } }) => (
       <div className={styles.listContent}>
         <div className={styles.listContentItem}>
 
-          <p>{content}</p>
+          <p>{taskName}</p>
         </div>
         <div className={styles.listContentItem}>
           <span>开始时间</span>
@@ -260,71 +282,82 @@ class MemoList extends PureComponent {
       );
     };
       return (
+        <GridContent className={styles.userCenter}>
+          <Row gutter={24}>
 
-        <PageHeaderWrapper>
-          <div className={styles.standardList}>
-            <Card
-              className={styles.listCard}
-              bordered={false}
-              title="我的待办"
-              style={{ marginTop: 24 }}
-              bodyStyle={{ padding: '0 32px 40px 32px' }}
-              extra={extraContent}
-            >
-              <Button
-                type="dashed"
-                style={{ width: '100%', marginBottom: 8 }}
-                icon="plus"
-                onClick={this.showModal}
-                ref={component => {
-                              /* eslint-disable */
-                              this.addBtn = findDOMNode(component);
-                              /* eslint-enable */
-                          }}
-              >
-                          添加
-              </Button>
-              <List
-                size="large"
-                rowKey="id"
-                loading={loading}
-                pagination={paginationProps}
-                dataSource={memoPage.list}
-                renderItem={item => (
-                  <List.Item
-                    actions={[
-                      <a
-                        onClick={e => {
-                                              e.preventDefault();
-                                              this.showEditModal(item);
-                                          }}
-                      >
-                                          编辑
-                      </a>,
-                      <MoreBtn current={item} />,
-                                  ]}
-                  >
-                    <ListContent data={item} />
-                  </List.Item>
-                          )}
-              />
-            </Card>
-          </div>
-          <Modal
-            title={done ? null : `任务${current ? '编辑' : '添加'}`}
-            className={styles.standardListForm}
-            width={640}
-            bodyStyle={done ? { padding: '72px 0' } : { padding: '28px 0 0' }}
-            destroyOnClose
-            visible={visible}
-            {...modalFooter}
-          >
-            {getModalContent()}
-          </Modal>
-        </PageHeaderWrapper>
+            <Col lg={24} md={24}>
+              <div className={styles.standardList}>
+                <Card
+                  className={styles.listCard}
+                  bordered={false}
+                  title="我的待办"
+                  style={{ marginTop: 0 }}
+                  bodyStyle={{ padding: '0 0 0 0' }}
+                  extra={extraContent}
+                >
+
+
+
+
+
+                  <Col lg={8} md={24}>
+                    <div className={styles.standardList}>
+                      <List
+                        size="small"
+                        rowKey="id"
+                        loading={loading}
+                        pagination={paginationProps}
+                        dataSource={taskPage.list}
+                        renderItem={item => (
+                          <List.Item
+                            actions={[
+                              <a
+                                onClick={e => {
+                                                    e.preventDefault();
+                                                    this.showEditModal(item);
+                                                }}
+                              >
+                                                编辑
+                              </a>,
+                              <MoreBtn current={item} />,
+                                        ]}
+                          >
+                            <ListContent data={item} />
+                          </List.Item>
+                                )}
+                      />
+                    </div>
+                    <Modal
+                      title={done ? null : `任务${current ? '编辑' : '添加'}`}
+                      className={styles.standardListForm}
+                      width={640}
+                      bodyStyle={done ? { padding: '72px 0' } : { padding: '28px 0 0' }}
+                      destroyOnClose
+                      visible={visible}
+                      {...modalFooter}
+                    >
+                      {getModalContent()}
+                    </Modal>
+
+                  </Col>
+                  <Col lg={8} md={24} />
+                  <Col lg={8} md={24} />
+
+
+
+                </Card>
+              </div>
+
+
+
+
+            </Col>
+          </Row>
+        </GridContent>
+
       )
       ;
   }
 }
 
-export default MemoList;
+export default TaskList;

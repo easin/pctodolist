@@ -1,19 +1,19 @@
-import { queryPage } from '@/services/memo';
+import { queryPage } from '@/services/task';
 
 export default {
-  namespace: 'memo',
+  namespace: 'task',
 
   state: {
-    memoPage: {pageNo:1,pageSize:10,list:[]},
+    taskPage: {pageNo:1,pageSize:10,list:[]},
   },
 
   effects: {
-    *fetchMemoList({ payload }, { call, put }) {
+    *fetchTaskList({ payload }, { call, put }) {
       const result = yield call(queryPage,payload);
       if(result.success)
       {
           yield put({
-              type: 'appendMemoPage',
+              type: 'appendTaskPage',
               payload: result.object,
           });
       }
@@ -22,10 +22,10 @@ export default {
   },
 
   reducers: {
-      appendMemoPage(state, action) {
+      appendTaskPage(state, action) {
       return {
         ...state,
-          memoPage: action.payload,
+          taskPage: action.payload,
       };
     },
   },
