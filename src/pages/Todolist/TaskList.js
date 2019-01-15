@@ -34,8 +34,10 @@ const { Search, TextArea } = Input;
 
 @connect(({ task, loading }) => ({
     task,
-  // loading: loading.models.task,
-  loading: loading.effects['task/fetchTaskList'],
+  loading: loading.models.task, // 监听指定模块
+  // loading: loading.effects['task/fetchTaskList'], //监听单个
+  // loading: loading.effects['task/fetchTaskList','task/markTaskName'],//监听指定的多个
+  // loading: loading.global() //监听全局
 }))
 @Form.create()
 class TaskList extends PureComponent {
@@ -48,15 +50,12 @@ class TaskList extends PureComponent {
 
   componentDidMount() {
     const { dispatch } = this.props;
-
         dispatch({
             type: 'task/fetchTaskList',
             payload: {
                 pageSize: 2,
             },
         });
-
-
   }
 
   showModal = () => {
@@ -196,23 +195,7 @@ class TaskList extends PureComponent {
 
               <p className={styles.line}>{itemIndex}. {taskName}</p>
             </div>
-            <TextArea
-              style={{ minHeight: 32 }}
-              placeholder="请输入任务"
-              // rows={4}
-              autosize
-              onChange={e => {
 
-                  e.preventDefault();
-                  console.log(e.target.value)
-                  this.markTaskName(id,e.target.value);
-                    }
-
-              }
-
-              value={this.state.taskName}
-              onPressEnter={()=>{alert(1)}}
-            />
             <div className={styles.listContentItem}>
               <p>{moment(createdTime).format('YYYY-MM-DD')}</p>
             </div>
