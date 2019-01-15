@@ -157,23 +157,18 @@ class TaskList extends PureComponent {
       <div className={styles.extraContent}>
 
         <Button
-          type="dashed"
-          style={{ marginBottom: 8 }}
+          type="primary"
           icon="plus"
+
           onClick={this.showModal}
           ref={component => {
-                  /* eslint-disable */
-                  this.addBtn = findDOMNode(component);
-                  /* eslint-enable */
-              }}
+                      /* eslint-disable */
+                      this.addBtn = findDOMNode(component);
+                      /* eslint-enable */
+                  }}
         >
-              添加
-        </Button>
-
-
-          <Button type="primary" ghost onClick={()=>{}} icon="plus" style={{ lineHeight: '21px' }}>
               添加待办
-          </Button>
+        </Button>
         <RadioGroup defaultValue="all" className={styles.extraContentSearchGap}>
           <RadioButton value="all">全部含完成</RadioButton>
           <RadioButton value="progress">待办</RadioButton>
@@ -295,10 +290,6 @@ class TaskList extends PureComponent {
                   bodyStyle={{ padding: '0 0 0 0' }}
                   extra={extraContent}
                 >
-
-
-
-
 
                   <Col lg={8} md={24}>
                     <div className={styles.standardList}>
