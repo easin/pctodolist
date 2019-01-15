@@ -202,6 +202,16 @@ class TaskList extends PureComponent {
             <div className={styles.listContentItem}>
               <p>{isArchived===0?'未归档':'已归档'}</p>
             </div>
+              <RadioGroup defaultValue="today" size={"small"}>
+                  <RadioButton value="today" ><Icon type="ordered-list" /></RadioButton>
+                  <RadioButton value="week" ><Icon type="calendar" /></RadioButton>
+              </RadioGroup>
+              <Icon type="calendar" onClick={()=>{alert(2)}} />
+              <Icon type="calendar" onClick={()=>{alert(2)}} />
+              <Icon type="calendar" onClick={()=>{alert(2)}} />
+            <div className={styles.listContentItem}>
+              <p>{status===0?(<Icon type="check" />):'已归档'}</p>
+            </div>
             <div className={styles.listContentItem}>
               <p><a
                 onClick={e => {
