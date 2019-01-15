@@ -38,7 +38,7 @@ const { Search, TextArea } = Input;
 }))
 @Form.create()
 class TaskList extends PureComponent {
-  state = { visible: false, done: false };
+  state = { visible: false, done: false,taskName:'' };
 
   formLayout = {
     labelCol: { span: 7 },
@@ -188,21 +188,49 @@ class TaskList extends PureComponent {
       total: 50,
     };
 
-    const ListContent = ({ data: { taskName, createdTime,endTime,status, isArchived } }) => (
-      <div className={styles.listContent}>
-        <div className={styles.listContentItem}>
+    const ListContent = ({ data: {id, taskName, createdTime,endTime,status, isArchived } ,itemIndex}) => {
+        console.log('渲染呢')
+        this.setState({"taskName":taskName});
+        return (
 
-          <p>{taskName}</p>
-        </div>
-        <div className={styles.listContentItem}>
-          <span>开始时间</span>
-          <p>{moment(createdTime).format('YYYY-MM-DD')}</p>
-        </div>
-        <div className={styles.listContentItem}>
-          <p>{isArchived===0?'未归档':'已归档'}</p>
-        </div>
-      </div>
-    );
+          <div className={styles.listContent}>
+            <div className={[styles.listContentItem]}>
+
+              <p className={styles.line}>{itemIndex}. {taskName}</p>
+            </div>
+            <TextArea
+              style={{ minHeight: 32 }}
+              placeholder="请输入任务"
+              // rows={4}
+              autosize
+              onChange={e => {
+                  e.preventDefault();
+                  console.log(e.target.value)}}
+
+              value={this.state.taskName}
+              onPressEnter={()=>{alert(1)}}
+            />
+            <div className={styles.listContentItem}>
+              <p>{moment(createdTime).format('YYYY-MM-DD')}</p>
+            </div>
+            <div className={styles.listContentItem}>
+              <p>{isArchived===0?'未归档':'已归档'}</p>
+            </div>
+            <div className={styles.listContentItem}>
+              <p><a
+                onClick={e => {
+                      e.preventDefault();
+                      const data={ taskName, createdTime,endTime,status, isArchived }
+                      this.showEditModal(data);
+                  }}
+              >
+                  编辑
+                 </a>
+              </p>
+            </div>
+
+          </div>
+    )};
 
     const MoreBtn = props => (
       <Dropdown
@@ -297,23 +325,12 @@ class TaskList extends PureComponent {
                         size="small"
                         rowKey="id"
                         loading={loading}
-                        pagination={paginationProps}
+                        // pagination={paginationProps}
                         dataSource={taskPage.list}
-                        renderItem={item => (
-                          <List.Item
-                            actions={[
-                              <a
-                                onClick={e => {
-                                                    e.preventDefault();
-                                                    this.showEditModal(item);
-                                                }}
-                              >
-                                                编辑
-                              </a>,
-                              <MoreBtn current={item} />,
-                                        ]}
-                          >
-                            <ListContent data={item} />
+                        renderItem={(item,index) => (
+                          <List.Item>
+
+                            <ListContent data={item} itemIndex={index+1} />
                           </List.Item>
                                 )}
                       />
