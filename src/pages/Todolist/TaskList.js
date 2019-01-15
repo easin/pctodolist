@@ -34,7 +34,8 @@ const { Search, TextArea } = Input;
 
 @connect(({ task, loading }) => ({
     task,
-  loading: loading.models.task,
+  // loading: loading.models.task,
+  loading: loading.effects['task/fetchTaskList'],
 }))
 @Form.create()
 class TaskList extends PureComponent {
@@ -47,12 +48,15 @@ class TaskList extends PureComponent {
 
   componentDidMount() {
     const { dispatch } = this.props;
-    dispatch({
-      type: 'task/fetchTaskList',
-      payload: {
-        pageSize: 2,
-      },
-    });
+
+        dispatch({
+            type: 'task/fetchTaskList',
+            payload: {
+                pageSize: 2,
+            },
+        });
+
+
   }
 
   showModal = () => {
@@ -118,11 +122,11 @@ class TaskList extends PureComponent {
     //   `task.taskPage`: { taskPage },
     //   loading,
     // } = this.props;
-    //   console.log(1111111)
+      console.log(1111111)
       // const {taskPage: { taskPage }}= this.props;
       // console.log(taskPage)
-      const {task: { taskPage },loading,}= this.props;
-      // console.log(taskPage)
+      const {task: { taskPage },loading,editing}= this.props;
+      console.log(editing)
     const {
       form: { getFieldDecorator },
     } = this.props;
@@ -181,12 +185,6 @@ class TaskList extends PureComponent {
       </div>
     );
 
-    const paginationProps = {
-      showSizeChanger: true,
-      showQuickJumper: true,
-      pageSize: 5,
-      total: 50,
-    };
 
     const ListContent = ({ data: {id, taskName, createdTime,endTime,status, isArchived } ,itemIndex}) => {
         console.log('渲染呢')
@@ -204,8 +202,13 @@ class TaskList extends PureComponent {
               // rows={4}
               autosize
               onChange={e => {
+
                   e.preventDefault();
-                  console.log(e.target.value)}}
+                  console.log(e.target.value)
+                  this.markTaskName(id,e.target.value);
+                    }
+
+              }
 
               value={this.state.taskName}
               onPressEnter={()=>{alert(1)}}
@@ -366,6 +369,16 @@ class TaskList extends PureComponent {
       )
       ;
   }
+
+    markTaskName(id, taskName) {
+        const { dispatch } = this.props;
+        dispatch({
+            type: 'task/markTaskName',
+            payload: {
+                id,taskName
+            },
+        });
+    }
 }
 
 export default TaskList;
