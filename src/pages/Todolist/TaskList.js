@@ -23,6 +23,7 @@ import {
 
 import GridContent from '@/components/PageHeaderWrapper/GridContent';
 import Result from '@/components/Result';
+import InfiniteScroll from 'react-infinite-scroller';
 
 import styles from './TaskList.less';
 
@@ -53,7 +54,7 @@ class TaskList extends PureComponent {
         dispatch({
             type: 'task/fetchTaskList',
             payload: {
-                pageSize: 2,
+                pageSize: 5,
             },
         });
   }
@@ -121,11 +122,10 @@ class TaskList extends PureComponent {
     //   `task.taskPage`: { taskPage },
     //   loading,
     // } = this.props;
-      console.log(1111111)
+    //   console.log(1111111)
       // const {taskPage: { taskPage }}= this.props;
       // console.log(taskPage)
       const {task: { taskPage },loading,editing}= this.props;
-      console.log(editing)
     const {
       form: { getFieldDecorator },
     } = this.props;
@@ -187,10 +187,11 @@ class TaskList extends PureComponent {
 
     const ListContent = ({ data: {id, taskName, createdTime,endTime,status, isArchived } ,itemIndex}) => {
         console.log('渲染呢')
-        this.setState({"taskName":taskName});
         return (
 
-          <div className={styles.listContent}>
+          <div className={[styles.listContent]}>
+
+
             <div className={[styles.listContentItem]}>
 
               <p className={styles.line}>{itemIndex}. {taskName}</p>
@@ -200,15 +201,20 @@ class TaskList extends PureComponent {
               <p>{moment(createdTime).format('YYYY-MM-DD')}</p>
             </div>
             <div className={styles.listContentItem}>
-              <p>{isArchived===0?'未归档':'已归档'}</p>
+              <p>{isArchived===0?'未归档':'已归档'}
+
+                <RadioGroup defaultValue="today" size="small">
+                  <RadioButton value="today"><Icon type="ordered-list" /></RadioButton>
+                  <RadioButton value="week"><Icon type="calendar" /></RadioButton>
+                </RadioGroup>
+                <Icon type="calendar" onClick={()=>{alert(2)}} />
+                <Icon type="calendar" onClick={()=>{alert(2)}} />
+                <Icon type="calendar" onClick={()=>{alert(2)}} />
+              </p>
+
+
             </div>
-              <RadioGroup defaultValue="today" size={"small"}>
-                  <RadioButton value="today" ><Icon type="ordered-list" /></RadioButton>
-                  <RadioButton value="week" ><Icon type="calendar" /></RadioButton>
-              </RadioGroup>
-              <Icon type="calendar" onClick={()=>{alert(2)}} />
-              <Icon type="calendar" onClick={()=>{alert(2)}} />
-              <Icon type="calendar" onClick={()=>{alert(2)}} />
+
             <div className={styles.listContentItem}>
               <p>{status===0?(<Icon type="check" />):'已归档'}</p>
             </div>
@@ -219,9 +225,7 @@ class TaskList extends PureComponent {
                       const data={ taskName, createdTime,endTime,status, isArchived }
                       this.showEditModal(data);
                   }}
-              >
-                  编辑
-                 </a>
+              >编辑</a>
               </p>
             </div>
 
@@ -316,7 +320,14 @@ class TaskList extends PureComponent {
                 >
 
                   <Col lg={8} md={24}>
-                    <div className={styles.standardList}>
+                    <div className={[styles.standardList,styles.taskContainer]}>
+                        <InfiniteScroll
+                            initialLoad={false}
+                            pageStart={0}
+                            loadMore={this.handleInfiniteOnLoad}
+                            hasMore={!this.state.loading && this.state.hasMore}
+                            useWindow={false}
+                        >
                       <List
                         size="small"
                         rowKey="id"
@@ -329,7 +340,14 @@ class TaskList extends PureComponent {
                             <ListContent data={item} itemIndex={index+1} />
                           </List.Item>
                                 )}
-                      />
+                      >
+                          {this.state.loading && this.state.hasMore && (
+                              <div className={styles.demoLoadingContainer}>
+                                  <Spin />
+                              </div>
+                          )}
+                      </List>
+                        </InfiniteScroll>
                     </div>
                     <Modal
                       title={done ? null : `任务${current ? '编辑' : '添加'}`}
