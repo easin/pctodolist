@@ -8,9 +8,9 @@ export default {
       todayTaskPage: {pageNo:1,pageSize:10,list:[]},
       weekTaskPage: {pageNo:1,pageSize:10,list:[]},
       archiveTaskPage: {pageNo:1,pageSize:10,list:[]},
-      todayLoading:false,
-      weekLoading:false,
-      archiveLoading:false,
+      isFinished:0,// 0未完成,1已完成，-1所有
+      isArchived:-1,// 0未归档,1归档，-1所有
+      keyword:''
   },
 
   effects: {
@@ -18,7 +18,8 @@ export default {
           const result = yield call(queryPage,payload);
           if(result.success)
           {
-              result.cate=0;
+              console.log('xxxxxxx')
+              result.object.cate=0;
               yield put({
                   type: 'appendTaskPage',
                   payload: result.object,
@@ -30,7 +31,7 @@ export default {
           const result = yield call(queryPage,payload);
           if(result.success)
           {
-              result.cate=1;
+              result.object.cate=1;
               yield put({
                   type: 'appendTaskPage',
                   payload: result.object,
@@ -42,7 +43,7 @@ export default {
           const result = yield call(queryPage,payload);
           if(result.success)
           {
-              result.cate=-1;
+              result.object.cate=-1;
               yield put({
                   type: 'appendTaskPage',
                   payload: result.object,

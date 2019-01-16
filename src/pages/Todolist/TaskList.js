@@ -35,11 +35,13 @@ const { Search, TextArea } = Input;
 
 @connect(({ task, loading }) => ({
     task,
-    todayLoading: loading.models.task, // 监听指定模块
+    // todayLoading: loading.models.task, // 监听指定模块
   // loading: loading.effects['task/fetchTaskList'], //监听单个
   // loading: loading.effects['task/fetchTaskList','task/markTaskName'],//监听指定的多个
   // loading: loading.global() //监听全局
-
+    todayLoading: loading.effects['task/fetchTodayTaskList'],
+    weekLoading: loading.effects['task/fetchWeekTaskList'],
+    archiveLoading: loading.effects['task/fetchArchiveTaskList'],
     //
 }))
 @Form.create()
@@ -52,15 +54,16 @@ class TaskList extends PureComponent {
   };
 
 
-  handleInfiniteOnLoad = () => {
-      const { dispatch,task:{todayTaskPage:{pageNo,totalPage,pageSize}} } = this.props;
+  handleInfiniteOnLoad = (cate) => {
+      const { keyword,isFinished,isArchived,dispatch,task:{todayTaskPage:{pageNo,totalPage,pageSize}} } = this.props;
+      const  requestType="task/fetch"+cate+"TaskList";
       if(pageNo<totalPage)
       {
           dispatch({
-              type: 'task/fetchTodayTaskList',
+              type: requestType,
               payload: {
                   pageNo:pageNo+1,
-                  pageSize,
+                  pageSize,keyword,isFinished,isArchived
               },
           });
       }
@@ -68,14 +71,31 @@ class TaskList extends PureComponent {
   }
 
   componentDidMount() {
-    const { task:{todayTaskPage:{pageNo,pageSize}},dispatch } = this.props;
+    const { keyword,isFinished,isArchived,task:{todayTaskPage:{pageNo,pageSize}},dispatch } = this.props;
+
         dispatch({
             type: 'task/fetchTodayTaskList',
             payload: {
                 pageNo,
-                pageSize,
+                pageSize,keyword,isFinished,isArchived
             },
         });
+
+      dispatch({
+          type: 'task/fetchWeekTaskList',
+          payload: {
+              pageNo,
+              pageSize,keyword,isFinished,isArchived
+          },
+      });
+      dispatch({
+          type: 'task/fetchArchiveTaskList',
+          payload: {
+              pageNo,
+              pageSize,keyword,isFinished,isArchived
+          },
+      });
+
   }
 
   showModal = () => {
@@ -117,12 +137,13 @@ class TaskList extends PureComponent {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       this.setState({
-        done: true,
-      });
+        done: true, visible: false,
+      });// 直接关掉
       dispatch({
         type: 'task/save',
         payload: { id, ...fieldsValue },
       });
+      // 并且过一段时间后触发3个事件，就在ui处触发吧
     });
   };
 
@@ -262,21 +283,21 @@ class TaskList extends PureComponent {
     );
 
     const getModalContent = () => {
-      if (done) {
-        return (
-          <Result
-            type="success"
-            title="操作成功"
-            description="一系列的信息描述，很短同样也可以带标点。"
-            actions={
-              <Button type="primary" onClick={this.handleDone}>
-                知道了
-              </Button>
-            }
-            className={styles.formResult}
-          />
-        );
-      }
+      // if (done) {
+      //   return (
+      //     <Result
+      //       type="success"
+      //       title="操作成功"
+      //       description="一系列的信息描述，很短同样也可以带标点。"
+      //       actions={
+      //         <Button type="primary" onClick={this.handleDone}>
+      //           知道了
+      //         </Button>
+      //       }
+      //       className={styles.formResult}
+      //     />
+      //   );
+      // }
       return (
         <Form onSubmit={this.handleSubmit}>
             <FormItem {...this.formLayout} label="任务">
@@ -351,7 +372,7 @@ class TaskList extends PureComponent {
                         <InfiniteScroll
                           initialLoad={false}
                           pageStart={0}
-                          loadMore={this.handleInfiniteOnLoad}
+                          loadMore={()=>this.handleInfiniteOnLoad('Today')}
                           hasMore={!todayLoading && todayTaskPage.totalPage>todayTaskPage.pageNo}
                           useWindow={false}
                         >
