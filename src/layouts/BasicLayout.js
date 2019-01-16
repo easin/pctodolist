@@ -79,10 +79,11 @@ class BasicLayout extends React.PureComponent {
     // if collapsed is true, you need to click twice to display
     const { collapsed, isMobile } = this.props;
     console.log('c:'+collapsed)
-    // if (isMobile && !preProps.isMobile && !collapsed) {
-    //   this.handleMenuCollapse(false);
-    // }
+    if (isMobile && !preProps.isMobile && !collapsed) {
+      this.handleMenuCollapse(false);
+    }
       this.handleMenuCollapse(true);
+    //   if()
   }
 
   getContext() {
@@ -118,14 +119,14 @@ class BasicLayout extends React.PureComponent {
     const currRouterData = this.matchParamsPath(pathname, breadcrumbNameMap);
 
     if (!currRouterData) {
-      return 'Ant Design Pro';
+      return 'ToDoList';
     }
     const pageName = formatMessage({
       id: currRouterData.locale || currRouterData.name,
       defaultMessage: currRouterData.name,
     });
 
-    return `${pageName} - Ant Design Pro`;
+    return `${pageName} - ToDoList`;
   };
 
   getLayoutStyle = () => {
@@ -141,8 +142,9 @@ class BasicLayout extends React.PureComponent {
     return null;
   };
 
-  handleMenuCollapse = collapsed => {
+  handleMenuCollapse = collapsed => {//每点击是不会触发的
     const { dispatch } = this.props;
+    console.log('xxxxxxxxwwwwwwwwww')
     console.log(this.props)
     dispatch({
       type: 'global/changeLayoutCollapsed',

@@ -94,6 +94,7 @@ export default {
         }
       });
       Object.keys(payload).forEach(key => {
+        // console.log('yyyy')
         if (key === 'collapse') {
           return;
         }
