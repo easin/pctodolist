@@ -391,7 +391,6 @@ requestAgain() {
                             size="small"
                             rowKey="id"
                             loading={todayLoading}
-                        // pagination={paginationProps}
                             dataSource={todayTaskPage.list}
                             renderItem={(item,index) => (
                               <List.Item>
@@ -438,7 +437,6 @@ requestAgain() {
                             size="small"
                             rowKey="id"
                             loading={todayLoading}
-                                        // pagination={paginationProps}
                             dataSource={todayTaskPage.list}
                             renderItem={(item,index) => (
                               <List.Item>
@@ -487,7 +485,6 @@ requestAgain() {
                             size="small"
                             rowKey="id"
                             loading={todayLoading}
-                                        // pagination={paginationProps}
                             dataSource={todayTaskPage.list}
                             renderItem={(item,index) => (
                               <List.Item>
