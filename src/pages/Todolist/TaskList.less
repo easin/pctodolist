@@ -49,8 +49,11 @@
     }
   }
   .listContent {
+    text-align: left;
+    width:100%;
     //font-size: 0;
     .listContentItem {
+      text-align: left;
       color: @text-color-secondary;
       display: inline-block;
       vertical-align: middle;
@@ -70,13 +73,7 @@
       text-align: left;
     }
   }
-  .taskContainer{
-    border: 1px solid #e8e8e8;
-    border-radius: 4px;
-    overflow: auto;
-    padding: 8px 24px;
-    height: 300px;
-  }
+
   .demoLoadingContainer {
     position: absolute;
     bottom: 40px;
@@ -91,6 +88,17 @@
     width: 272px;
   }
 }
+
+.taskContainer{
+  border: 1px solid #e8e8e8;
+  border-radius: 4px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0 0;
+  height: 500px;
+  margin-bottom: 20px;
+}
+
 
 @media screen and (max-width: @screen-xs) {
   .standardList {
@@ -201,7 +209,7 @@
       margin-bottom: 12px;
       &:last-child {
         padding-top: 4px;
-        margin-bottom: 32px;
+        margin-bottom: 22px;
       }
     }
   }
