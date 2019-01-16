@@ -44,7 +44,7 @@ const { Search, TextArea } = Input;
 }))
 @Form.create()
 class TaskList extends PureComponent {
-  state = { visible: false, done: false,taskName:'' };
+  state = { visible: false, done: false, };
 
   formLayout = {
     labelCol: { span: 3 },

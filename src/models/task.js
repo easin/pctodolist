@@ -14,21 +14,11 @@ export default {
   },
 
   effects: {
-      *fetchTaskList({ payload }, { call, put }) {
-          const result = yield call(queryPage,payload);
-          if(result.success)
-          {
-              yield put({
-                  type: 'appendTaskPage',
-                  payload: result.object,
-              });
-          }
-
-      },
       *fetchTodayTaskList({ payload }, { call, put }) {
           const result = yield call(queryPage,payload);
           if(result.success)
           {
+              result.cate=0;
               yield put({
                   type: 'appendTaskPage',
                   payload: result.object,
@@ -40,6 +30,7 @@ export default {
           const result = yield call(queryPage,payload);
           if(result.success)
           {
+              result.cate=1;
               yield put({
                   type: 'appendTaskPage',
                   payload: result.object,
@@ -51,19 +42,9 @@ export default {
           const result = yield call(queryPage,payload);
           if(result.success)
           {
+              result.cate=-1;
               yield put({
                   type: 'appendTaskPage',
-                  payload: result.object,
-              });
-          }
-
-      },
-      *markTaskName({ payload }, { call, put }) {
-          const result = yield call(queryPage,payload);
-          if(result.success)
-          {
-              yield put({
-                  type: 'markTaskName',
                   payload: result.object,
               });
           }
@@ -73,26 +54,30 @@ export default {
 
   reducers: {
       appendTaskPage(state, action) {
-          action.payload.list=_.concat(state.todayTaskPage.list, action.payload.list);
-
-      return {
-        ...state,
-          todayTaskPage: JSON.parse(JSON.stringify(action.payload)),
-      };
-    },markTaskName(state, action) {
-          const {todayTaskPage:{list}}=state;
-          const idx=_.findIndex(list, { id:action.payload.id });
-          if(idx>-1)
+          const {cate}=action.payload;
+          delete action.payload.cate;
+          switch(cate)
           {
-              list[idx].taskName=action.payload.taskName;
-              list[idx].edited=1;
-              state.todayTaskPage.list=list;
+              case 0:action.payload.list=_.concat(state.todayTaskPage.list, action.payload.list);break;
+              case 1:action.payload.list=_.concat(state.weekTaskPage.list, action.payload.list);break;
+              default: action.payload.list=_.concat(state.archiveTaskPage.list, action.payload.list);break;
+          }
+          switch(cate)
+          {
+              case 0:return {...state,todayTaskPage: JSON.parse(JSON.stringify(action.payload))};
+              case 1:return {...state,weekTaskPage: JSON.parse(JSON.stringify(action.payload))};
+              default: return {...state,archiveTaskPage: JSON.parse(JSON.stringify(action.payload))};
           }
 
-          return {
-              ...state,
-              todayTaskPage: JSON.parse(JSON.stringify(state.todayTaskPage)),
-          };
+    },firstTaskPage(state, action) {
+          const {cate}=action.payload;
+          delete action.payload.cate;
+          switch(cate)
+          {
+              case 0:return {...state,todayTaskPage: action.payload};
+              case 1:return {...state,weekTaskPage: action.payload};
+              default: return {...state,archiveTaskPage: action.payload};
+          }
       },
   },
 };
