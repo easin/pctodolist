@@ -56,7 +56,7 @@ class TaskList extends PureComponent {
 
   handleInfiniteOnLoad = (cate) => {
       const { keyword,isFinished,isArchived,dispatch,task:{todayTaskPage:{pageNo,totalPage,pageSize}} } = this.props;
-      const  requestType="task/fetch"+cate+"TaskList";
+      const  requestType=`task/fetch${cate}TaskList`;
       if(pageNo<totalPage)
       {
           dispatch({
@@ -71,34 +71,38 @@ class TaskList extends PureComponent {
   }
 
   componentDidMount() {
-    const { keyword,isFinished,isArchived,task:{todayTaskPage:{pageNo,pageSize}},dispatch } = this.props;
-
-        dispatch({
-            type: 'task/fetchTodayTaskList',
-            payload: {
-                pageNo,
-                pageSize,keyword,isFinished,isArchived
-            },
-        });
-
-      dispatch({
-          type: 'task/fetchWeekTaskList',
-          payload: {
-              pageNo,
-              pageSize,keyword,isFinished,isArchived
-          },
-      });
-      dispatch({
-          type: 'task/fetchArchiveTaskList',
-          payload: {
-              pageNo,
-              pageSize,keyword,isFinished,isArchived
-          },
-      });
+      this.requestAgain();
 
   }
 
-  showModal = () => {
+requestAgain() {
+    const {keyword, isFinished, isArchived, task: {todayTaskPage: {pageNo, pageSize}}, dispatch} = this.props;
+
+    dispatch({
+        type: 'task/fetchTodayTaskList',
+        payload: {
+            pageNo,
+            pageSize, keyword, isFinished, isArchived
+        },
+    });
+
+    dispatch({
+        type: 'task/fetchWeekTaskList',
+        payload: {
+            pageNo,
+            pageSize, keyword, isFinished, isArchived
+        },
+    });
+    dispatch({
+        type: 'task/fetchArchiveTaskList',
+        payload: {
+            pageNo,
+            pageSize, keyword, isFinished, isArchived
+        },
+    });
+}
+
+    showModal = () => {
     this.setState({
       visible: true,
       current: undefined,
@@ -135,7 +139,13 @@ class TaskList extends PureComponent {
 
     setTimeout(() => this.addBtn.blur(), 0);
     form.validateFields((err, fieldsValue) => {
+        // console.log(fieldsValue)
       if (err) return;
+      if(fieldsValue.endTime)
+      {
+          fieldsValue.endTime=fieldsValue.endTime.format("YYYY-MM-DD HH:mm:ss");
+      }
+
       this.setState({
         done: true, visible: false,
       });// 直接关掉
@@ -144,6 +154,9 @@ class TaskList extends PureComponent {
         payload: { id, ...fieldsValue },
       });
       // 并且过一段时间后触发3个事件，就在ui处触发吧
+
+
+    setTimeout(() =>this.requestAgain() , 0);
     });
   };
 
@@ -184,9 +197,7 @@ class TaskList extends PureComponent {
       }
     };
 
-    const modalFooter = done
-      ? { footer: null, onCancel: this.handleDone }
-      : { okText: '保存', onOk: this.handleSubmit, onCancel: this.handleCancel };
+    const modalFooter = { okText: '保存', onOk: this.handleSubmit, onCancel: this.handleCancel };
 
     const Info = ({ title, value, bordered }) => (
       <div className={styles.headerInfo}>
@@ -212,60 +223,60 @@ class TaskList extends PureComponent {
         >
               添加待办
         </Button>
-        <RadioGroup defaultValue="all" className={styles.extraContentSearchGap}>
-          <RadioButton value="all">全部含完成</RadioButton>
-          <RadioButton value="progress">待办</RadioButton>
+        <RadioGroup defaultValue="-1" className={styles.extraContentSearchGap}>
+          <RadioButton value="-1">全部含完成</RadioButton>
+          <RadioButton value="0">待办</RadioButton>
         </RadioGroup>
         <RadioGroup defaultValue="all" className={styles.extraContentSearchGap}>
-          <RadioButton value="all">全部含已归档</RadioButton>
-          <RadioButton value="progress">未归档</RadioButton>
+          <RadioButton value="-1">全部含已归档</RadioButton>
+          <RadioButton value="0">未归档</RadioButton>
         </RadioGroup>
         <Search className={[styles.extraContentSearch,styles.extraContentSearchGap]} placeholder="请输入" onSearch={() => ({})} />
       </div>
     );
 
 
-    const ListContent = ({ data: {id, taskName, createdTime,endTime,status,cate,tagIds,priority, isArchived,remark,sort } ,itemIndex}) => {
-        return (
+    const ListContent = ({ data: {id, taskName, createdTime,endTime,status,cate,tagIds,priority, isArchived,remark,sort } ,itemIndex}) => (
 
-          <div className={[styles.listContent]}>
-
-
-            <div className={[styles.listContentItem,styles.line]} >
-                <div className={styles.line}>{itemIndex}. {taskName}</div>
-            </div>
-
-            <div className={styles.listContentItem}>
-              <p>{moment(createdTime).format('YYYY-MM-DD')}</p>
-            </div>
-            <div className={styles.listContentItem}>
-              <p>{isArchived===0?'未归档':'已归档'}
+      <div className={[styles.listContent]}>
 
 
-                <Icon type="calendar" onClick={()=>{alert(2)}} />
-                <Icon type="calendar" onClick={()=>{alert(2)}} />
-                <Icon type="calendar" onClick={()=>{alert(2)}} />
-              </p>
+        <div className={[styles.listContentItem,styles.line]}>
+          <div className={styles.line}>{itemIndex}. {taskName}</div>
+        </div>
+
+        <div className={styles.listContentItem}>
+          <p>{moment(createdTime).format('YYYY-MM-DD')}</p>
+        </div>
+        <div className={styles.listContentItem}>
+          <p>{isArchived===0?'未归档':'已归档'}
 
 
-            </div>
+            <Icon type="calendar" onClick={()=>{alert(2)}} />
+            <Icon type="calendar" onClick={()=>{alert(2)}} />
+            <Icon type="calendar" onClick={()=>{alert(2)}} />
+          </p>
 
-            <div className={styles.listContentItem}>
-              <p>{status===0?(<Icon type="check" />):'已归档'}</p>
-            </div>
-            <div className={styles.listContentItem}>
-              <p><a
-                onClick={e => {
+
+        </div>
+
+        <div className={styles.listContentItem}>
+          <p>{status===0?(<Icon type="check" />):'已归档'}</p>
+        </div>
+        <div className={styles.listContentItem}>
+          <p><a
+            onClick={e => {
                       e.preventDefault();
                       const data={id, taskName, createdTime,endTime,status,cate,tagIds,priority, isArchived,remark,sort }
                       this.showEditModal(data);
                   }}
-              >编辑</a>
-              </p>
-            </div>
+          >编辑
+          </a>
+          </p>
+        </div>
 
-          </div>
-    )};
+      </div>
+    );
 
     const MoreBtn = props => (
       <Dropdown
@@ -282,7 +293,7 @@ class TaskList extends PureComponent {
       </Dropdown>
     );
 
-    const getModalContent = () => {
+    const getModalContent = () => 
       // if (done) {
       //   return (
       //     <Result
@@ -298,16 +309,16 @@ class TaskList extends PureComponent {
       //     />
       //   );
       // }
-      return (
-        <Form onSubmit={this.handleSubmit}>
-            <FormItem {...this.formLayout} label="任务">
-                {getFieldDecorator('subDescription', {
+       (
+         <Form onSubmit={this.handleSubmit}>
+           <FormItem {...this.formLayout} label="任务">
+             {getFieldDecorator('taskName', {
                     rules: [{ message: '请输入至少五个字符的产品描述！', min: 5 }],
                     initialValue: current.taskName,
                 })(<TextArea rows={8} placeholder="请输入至少五个字符" />)}
-            </FormItem>
-          <FormItem label="开始时间" {...this.formLayout}>
-            {getFieldDecorator('endTime', {
+           </FormItem>
+           <FormItem label="结束时间" {...this.formLayout}>
+             {getFieldDecorator('endTime', {
               rules: [{ required: true, message: '请选择结束时间' }],
               initialValue: current.endTime ? moment(current.endTime) : null,
             })(
@@ -318,9 +329,9 @@ class TaskList extends PureComponent {
                 style={{ width: '100%' }}
               />
             )}
-          </FormItem>
-          <FormItem label="优先级别" {...this.formLayout}>
-            {getFieldDecorator('priority', {
+           </FormItem>
+           <FormItem label="优先级别" {...this.formLayout}>
+             {getFieldDecorator('priority', {
               rules: [{ required: true, message: '请选择级别' }],
               initialValue: current.priority,
             })(
@@ -332,27 +343,27 @@ class TaskList extends PureComponent {
                 <SelectOption value="5">5</SelectOption>
               </Select>
             )}
-          </FormItem>
+           </FormItem>
 
-            <FormItem label="排序" {...this.formLayout}>
-                {getFieldDecorator('sort', {
+           <FormItem label="排序" {...this.formLayout}>
+             {getFieldDecorator('sort', {
                     rules: [{ required: true, message: '请选择级别' }],
                     initialValue: current.sort,
                 })(
-                    <Input placeholder="请输入" />
+                  <Input placeholder="请输入" />
                 )}
-            </FormItem>
-            <FormItem label="备忘名称" {...this.formLayout}>
-                {getFieldDecorator('remark', {
+           </FormItem>
+           <FormItem label="备忘" {...this.formLayout}>
+             {getFieldDecorator('remark', {
                     rules: [{ required: true, remark: '其他备注' }],
                     initialValue: current.remark,
                 })(<TextArea rows={4} placeholder="请输入至少五个字符" />)}
-            </FormItem>
-        </Form>
-      );
-    };
+           </FormItem>
+         </Form>
+      )
+    ;
       return (
-        <GridContent className={styles.userCenter}>
+        <GridContent style={{ margin: 0 ,padding:0}}>
           <Row gutter={24}>
 
             <Col lg={24} md={24}>
@@ -412,8 +423,103 @@ class TaskList extends PureComponent {
                     </Modal>
 
                   </Col>
-                  <Col lg={8} md={24} />
-                  <Col lg={8} md={24} />
+
+                  <Col lg={8} md={24}>
+                    <div className={[styles.standardList]}>
+                      <div className={styles.taskContainer}>
+                        <InfiniteScroll
+                          initialLoad={false}
+                          pageStart={0}
+                          loadMore={()=>this.handleInfiniteOnLoad('Today')}
+                          hasMore={!todayLoading && todayTaskPage.totalPage>todayTaskPage.pageNo}
+                          useWindow={false}
+                        >
+                          <List
+                            size="small"
+                            rowKey="id"
+                            loading={todayLoading}
+                                        // pagination={paginationProps}
+                            dataSource={todayTaskPage.list}
+                            renderItem={(item,index) => (
+                              <List.Item>
+
+                                <ListContent data={item} itemIndex={index+1} />
+                              </List.Item>
+                                        )}
+                          >
+                            {todayLoading && todayTaskPage.totalPage>todayTaskPage.pageNo && (
+                            <div className={styles.demoLoadingContainer}>
+                              <Spin />
+                            </div>
+                                        )}
+                          </List>
+                        </InfiniteScroll>
+                      </div>
+                    </div>
+                    <Modal
+                      title={done ? null : `任务${current ? '编辑' : '添加'}`}
+                      className={styles.standardListForm}
+                      width={1024}
+                      style={{top:10}}
+                      bodyStyle={done ? { marginTop:72 } : { marginTop:10}}
+                      destroyOnClose
+                      visible={visible}
+                      {...modalFooter}
+                    >
+                      {getModalContent()}
+                    </Modal>
+
+                  </Col>
+
+
+
+                  <Col lg={8} md={24}>
+                    <div className={[styles.standardList]}>
+                      <div className={styles.taskContainer}>
+                        <InfiniteScroll
+                          initialLoad={false}
+                          pageStart={0}
+                          loadMore={()=>this.handleInfiniteOnLoad('Today')}
+                          hasMore={!todayLoading && todayTaskPage.totalPage>todayTaskPage.pageNo}
+                          useWindow={false}
+                        >
+                          <List
+                            size="small"
+                            rowKey="id"
+                            loading={todayLoading}
+                                        // pagination={paginationProps}
+                            dataSource={todayTaskPage.list}
+                            renderItem={(item,index) => (
+                              <List.Item>
+
+                                <ListContent data={item} itemIndex={index+1} />
+                              </List.Item>
+                                        )}
+                          >
+                            {todayLoading && todayTaskPage.totalPage>todayTaskPage.pageNo && (
+                            <div className={styles.demoLoadingContainer}>
+                              <Spin />
+                            </div>
+                                        )}
+                          </List>
+                        </InfiniteScroll>
+                      </div>
+                    </div>
+                    <Modal
+                      title={done ? null : `任务${current ? '编辑' : '添加'}`}
+                      className={styles.standardListForm}
+                      width={1024}
+                      style={{top:10}}
+                      bodyStyle={done ? { marginTop:72 } : { marginTop:10}}
+                      destroyOnClose
+                      visible={visible}
+                      {...modalFooter}
+                    >
+                      {getModalContent()}
+                    </Modal>
+
+                  </Col>
+
 
 
 
@@ -431,15 +537,6 @@ class TaskList extends PureComponent {
       ;
   }
 
-    markTaskName(id, taskName) {
-        const { dispatch } = this.props;
-        dispatch({
-            type: 'task/markTaskName',
-            payload: {
-                id,taskName
-            },
-        });
-    }
 }
 
 export default TaskList;

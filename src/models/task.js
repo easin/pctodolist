@@ -1,4 +1,4 @@
-import { queryPage } from '@/services/task';
+import { queryPage,save } from '@/services/task';
 import _ from "lodash";
 
 export default {
@@ -48,6 +48,14 @@ export default {
                   type: 'appendTaskPage',
                   payload: result.object,
               });
+          }
+
+      },
+      *save({ payload }, { call }) {
+          const result = yield call(save,payload);
+          if(result.success)
+          {
+            console.log('保存成功')
           }
 
       },

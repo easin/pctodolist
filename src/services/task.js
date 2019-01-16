@@ -8,6 +8,12 @@ export async function queryPage(params) {
   });
 }
 
+export async function save(params) {
+    return request('/api/task/save',{
+        method:'POST',
+        body:stringify(params),
+    });
+}
 
 export async function queryCurrent() {
   return request('/api/currentUser');
