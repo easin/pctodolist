@@ -76,12 +76,12 @@ class TaskList extends PureComponent {
   }
 
 requestAgain() {
-    const {keyword, isFinished, isArchived, task: {todayTaskPage: {pageNo, pageSize}}, dispatch} = this.props;
+    const {keyword, isFinished, isArchived, task: {todayTaskPage: { pageSize}}, dispatch} = this.props;
 
     dispatch({
         type: 'task/fetchTodayTaskList',
         payload: {
-            pageNo,
+            pageNo:1,
             pageSize, keyword, isFinished, isArchived
         },
     });
@@ -89,14 +89,14 @@ requestAgain() {
     dispatch({
         type: 'task/fetchWeekTaskList',
         payload: {
-            pageNo,
+            pageNo:1,
             pageSize, keyword, isFinished, isArchived
         },
     });
     dispatch({
         type: 'task/fetchArchiveTaskList',
         payload: {
-            pageNo,
+            pageNo:1,
             pageSize, keyword, isFinished, isArchived
         },
     });
@@ -178,7 +178,7 @@ requestAgain() {
     //   console.log(1111111)
       // const {todayTaskPage: { todayTaskPage }}= this.props;
       // console.log(todayTaskPage)
-      const {task: { todayTaskPage },todayLoading}= this.props;
+      const {task: { todayTaskPage,weekTaskPage,archiveTaskPage },todayLoading,weekLoading,archiveLoading}= this.props;
     const {
       form: { getFieldDecorator },
     } = this.props;
@@ -429,15 +429,15 @@ requestAgain() {
                         <InfiniteScroll
                           initialLoad={false}
                           pageStart={0}
-                          loadMore={()=>this.handleInfiniteOnLoad('Today')}
-                          hasMore={!todayLoading && todayTaskPage.totalPage>todayTaskPage.pageNo}
+                          loadMore={()=>this.handleInfiniteOnLoad('Week')}
+                          hasMore={!weekLoading && weekTaskPage.totalPage>weekTaskPage.pageNo}
                           useWindow={false}
                         >
                           <List
                             size="small"
                             rowKey="id"
-                            loading={todayLoading}
-                            dataSource={todayTaskPage.list}
+                            loading={weekLoading}
+                            dataSource={weekTaskPage.list}
                             renderItem={(item,index) => (
                               <List.Item>
 
@@ -445,7 +445,7 @@ requestAgain() {
                               </List.Item>
                                         )}
                           >
-                            {todayLoading && todayTaskPage.totalPage>todayTaskPage.pageNo && (
+                            {weekLoading && weekTaskPage.totalPage>weekTaskPage.pageNo && (
                             <div className={styles.demoLoadingContainer}>
                               <Spin />
                             </div>
@@ -477,15 +477,15 @@ requestAgain() {
                         <InfiniteScroll
                           initialLoad={false}
                           pageStart={0}
-                          loadMore={()=>this.handleInfiniteOnLoad('Today')}
-                          hasMore={!todayLoading && todayTaskPage.totalPage>todayTaskPage.pageNo}
+                          loadMore={()=>this.handleInfiniteOnLoad('Archive')}
+                          hasMore={!archiveLoading && archiveTaskPage.totalPage>archiveTaskPage.pageNo}
                           useWindow={false}
                         >
                           <List
                             size="small"
                             rowKey="id"
-                            loading={todayLoading}
-                            dataSource={todayTaskPage.list}
+                            loading={archiveLoading}
+                            dataSource={archiveTaskPage.list}
                             renderItem={(item,index) => (
                               <List.Item>
 
@@ -493,7 +493,7 @@ requestAgain() {
                               </List.Item>
                                         )}
                           >
-                            {todayLoading && todayTaskPage.totalPage>todayTaskPage.pageNo && (
+                            {archiveLoading && archiveTaskPage.totalPage>archiveTaskPage.pageNo && (
                             <div className={styles.demoLoadingContainer}>
                               <Spin />
                             </div>
