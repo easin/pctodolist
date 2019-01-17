@@ -82,7 +82,10 @@ class TaskList extends PureComponent {
       // this.addBtn.scrollTo(0, -50);
       // ReactDOM.findDOMNode(body).scrollTo(0, top - 50);
       const { task: { keyword}} = this.props;
-      this.setState({keywordStr:keyword})
+      // this.setState({keywordStr:keyword})
+      console.log(keyword)
+      console.log(this.searchBtn)
+      this.searchBtn.value=keyword;
   }
 
 requestAgain() {
@@ -189,7 +192,7 @@ requestAgain() {
       // const {todayTaskPage: { todayTaskPage }}= this.props;
       // console.log(todayTaskPage)
       const {task: { todayTaskPage,weekTaskPage,archiveTaskPage,isFinished,isArchived,keyword },todayLoading,weekLoading,archiveLoading}= this.props;
-      console.log(`${isFinished}******${todayLoading}`)
+      console.log(`${isFinished}******${todayLoading}${keyword}`)
     const {
       form: { getFieldDecorator },
     } = this.props;
@@ -243,7 +246,11 @@ requestAgain() {
           <RadioButton value="-1">全部含已归档</RadioButton>
           <RadioButton value="0">未归档</RadioButton>
         </RadioGroup>
-        <Search value={this.state.keywordStr} className={[styles.extraContentSearch,styles.extraContentSearchGap]} placeholder="请输入" onChange={this.changeKeyword} onSearch={(query) => {this.searchTag(query)}} />
+        <Search autoFocus key="searchBar" value={this.state.keywordStr} className={[styles.extraContentSearch,styles.extraContentSearchGap]} placeholder="请输入"  ref={component => {
+            /* eslint-disable */
+            this.searchBtn = findDOMNode(component);
+            /* eslint-enable */
+        }} onSearch={(query) => {this.searchTag(query)}} onChange={this.changeKeyword} />
       </div>
         )
 
@@ -542,13 +549,15 @@ requestAgain() {
                 keyword
             },
         });
-        this.setState({keywordStr:keyword});
-
+        // this.setState({keywordStr:keyword});
+        this.searchBtn.value='我要测试'
         setTimeout(() => this.requestAgain(), 200);
     }
 
     changeKeyword = (e) => {
+        e.preventDefault();
         this.setState({keywordStr:e.target.value})
+        // setTimeout(() => this.searchBtn.focus(), 0);
     }
 }
 

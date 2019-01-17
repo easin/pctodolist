@@ -86,7 +86,7 @@ export default {
           const {cate}=action.payload;
           delete action.payload.cate;
 
-          if(action.payload.pageNo ==1)
+          if(action.payload.pageNo <2)
           {
               switch(cate)
               {
