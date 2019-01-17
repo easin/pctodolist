@@ -18,7 +18,7 @@ export default [
     authority: ['admin', 'user'],
     routes: [
       // dashboard
-      { path: '/', redirect: '/dashboard/analysis' },
+      { path: '/', redirect: '/task' },
       {  path: '/task',name: 'task',icon:'bars',component: './Todolist/TaskList',},
       {  path: '/memo',name: 'memo',icon:'snippets',component: './Todolist/MemoList',},
       {  path: '/habit',name: 'habit',icon:'redo',component: './Dashboard/Analysis',},
