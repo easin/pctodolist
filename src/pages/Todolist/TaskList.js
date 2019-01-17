@@ -74,26 +74,32 @@ class TaskList extends PureComponent {
 
   componentDidMount() {
       this.requestAgain();
-
+      // var top = window.document.scrollTop;
+      // var body=document.getElementById("root");
+      // console.log('->'+body)
+      // // body.scrollTo(0,  - 50);
+      // // body.scrollTo(0,  - 50);
+      // this.addBtn.scrollTo(0, -50);
+      // ReactDOM.findDOMNode(body).scrollTo(0, top - 50);
   }
 
 requestAgain() {
     const { task: {todayTaskPage: { pageSize}, keyword, isFinished, isArchived},dispatch} = this.props;
-    // dispatch({
-    //     type: 'task/fetchTodayTaskList',
-    //     payload: {
-    //         pageNo:1,
-    //         pageSize, keyword, isFinished, isArchived:0,cate:0
-    //     },
-    // });
-    // //
-    // dispatch({
-    //     type: 'task/fetchWeekTaskList',
-    //     payload: {
-    //         pageNo:1,
-    //         pageSize, keyword, isFinished,  isArchived:0,cate:1
-    //     },
-    // });
+    dispatch({
+        type: 'task/fetchTodayTaskList',
+        payload: {
+            pageNo:1,
+            pageSize, keyword, isFinished, isArchived:0,cate:0
+        },
+    });
+    //
+    dispatch({
+        type: 'task/fetchWeekTaskList',
+        payload: {
+            pageNo:1,
+            pageSize, keyword, isFinished,  isArchived:0,cate:1
+        },
+    });
     dispatch({
         type: 'task/fetchArchiveTaskList',
         payload: {
@@ -410,18 +416,6 @@ requestAgain() {
                         </InfiniteScroll>
                       </div>
                     </div>
-                    <Modal
-                      title={done ? null : `任务${current ? '编辑' : '添加'}`}
-                      className={styles.standardListForm}
-                      width={1024}
-                      style={{top:10}}
-                      bodyStyle={done ? { marginTop:72 } : { marginTop:10}}
-                      destroyOnClose
-                      visible={visible}
-                      {...modalFooter}
-                    >
-                      {getModalContent()}
-                    </Modal>
 
                   </Col>
 
@@ -456,18 +450,6 @@ requestAgain() {
                         </InfiniteScroll>
                       </div>
                     </div>
-                    <Modal
-                      title={done ? null : `任务${current ? '编辑' : '添加'}`}
-                      className={styles.standardListForm}
-                      width={1024}
-                      style={{top:10}}
-                      bodyStyle={done ? { marginTop:72 } : { marginTop:10}}
-                      destroyOnClose
-                      visible={visible}
-                      {...modalFooter}
-                    >
-                      {getModalContent()}
-                    </Modal>
 
                   </Col>
 
