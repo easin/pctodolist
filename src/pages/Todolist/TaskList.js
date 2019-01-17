@@ -83,14 +83,13 @@ class TaskList extends PureComponent {
       // ReactDOM.findDOMNode(body).scrollTo(0, top - 50);
   }
 
-requestAgain(_isFinished,_isArchived) {
+requestAgain() {
     const { task: {todayTaskPage: { pageSize}, keyword, isFinished, isArchived},dispatch} = this.props;
-    _isFinished=_isArchived === undefined?isFinished:_isFinished;
     dispatch({
         type: 'task/fetchTodayTaskList',
         payload: {
             pageNo:1,
-            pageSize, keyword, isFinished:_isFinished, isArchived:0,cate:0
+            pageSize, keyword, isFinished, isArchived:0,cate:0
         },
     });
     //
@@ -98,14 +97,14 @@ requestAgain(_isFinished,_isArchived) {
         type: 'task/fetchWeekTaskList',
         payload: {
             pageNo:1,
-            pageSize, keyword, isFinished:_isFinished,  isArchived:0,cate:1
+            pageSize, keyword, isFinished,  isArchived:0,cate:1
         },
     });
     dispatch({
         type: 'task/fetchArchiveTaskList',
         payload: {
             pageNo:1,
-            pageSize, keyword, isFinished:_isFinished, isArchived,cate:-1
+            pageSize, keyword, isFinished, isArchived,cate:-1
         },
     });
 }
@@ -520,7 +519,7 @@ requestAgain(_isFinished,_isArchived) {
             },
         });
 
-        setTimeout(() => this.requestAgain(e.target.value,-1), 200);
+        setTimeout(() => this.requestAgain(), 200);
     }
 }
 
