@@ -72,7 +72,12 @@ export default {
               type: 'toggleArchivedState',
               payload,
           });
-
+      },
+      *keywordChange({ payload }, { put }) {
+          yield put({
+              type: 'keywordChangeState',
+              payload,
+          });
       },
   },
 
@@ -112,6 +117,9 @@ export default {
       },toggleArchivedState(state, action) {
           console.log(action.payload)
           return {...state,isArchived: parseInt(action.payload.isArchived)};
+      },keywordChangeState(state, action) {
+          console.log(action.payload)
+          return {...state,keyword: action.payload.keyword};
       },
   },
 };

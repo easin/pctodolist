@@ -46,7 +46,7 @@ const { Search, TextArea } = Input;
 }))
 @Form.create()
 class TaskList extends PureComponent {
-  state = { visible: false, done: false, };
+  state = { visible: false, done: false,keywordStr:'' };
 
   formLayout = {
     labelCol: { span: 3 },
@@ -81,6 +81,8 @@ class TaskList extends PureComponent {
       // // body.scrollTo(0,  - 50);
       // this.addBtn.scrollTo(0, -50);
       // ReactDOM.findDOMNode(body).scrollTo(0, top - 50);
+      const { task: { keyword}} = this.props;
+      this.setState({keywordStr:keyword})
   }
 
 requestAgain() {
@@ -186,8 +188,8 @@ requestAgain() {
     //   console.log(1111111)
       // const {todayTaskPage: { todayTaskPage }}= this.props;
       // console.log(todayTaskPage)
-      const {task: { todayTaskPage,weekTaskPage,archiveTaskPage,isFinished,isArchived },todayLoading,weekLoading,archiveLoading}= this.props;
-      console.log(isFinished+'******'+todayLoading)
+      const {task: { todayTaskPage,weekTaskPage,archiveTaskPage,isFinished,isArchived,keyword },todayLoading,weekLoading,archiveLoading}= this.props;
+      console.log(`${isFinished}******${todayLoading}`)
     const {
       form: { getFieldDecorator },
     } = this.props;
@@ -216,37 +218,34 @@ requestAgain() {
       </div>
     );
 
-    const SearchFilterExtraContent = ({cmpIsFinished,cmpIsArchived}) => {
-        console.log('-->' +cmpIsArchived)
-        return (
+    const SearchFilterExtraContent = ({cmpIsFinished,cmpIsArchived,keywordStr}) => (
 
-            <div className={styles.extraContent}>
+      <div className={styles.extraContent}>
 
-                <Button
-                    type="primary"
-                    icon="plus"
+        <Button
+          type="primary"
+          icon="plus"
 
-                    onClick={this.showModal}
-                    ref={component => {
+          onClick={this.showModal}
+          ref={component => {
                         /* eslint-disable */
                         this.addBtn = findDOMNode(component);
                         /* eslint-enable */
                     }}
-                >
+        >
                     添加待办
-                </Button>
-                <RadioGroup defaultValue={cmpIsFinished === -1?"-1":"0"} className={styles.extraContentSearchGap} onChange={this.toggleFinished}>
-                    <RadioButton value="-1">全部含完成</RadioButton>
-                    <RadioButton value="0">待办</RadioButton>
-                </RadioGroup>
-                <RadioGroup defaultValue={cmpIsArchived === -1?"-1":"0"} className={styles.extraContentSearchGap}>
-                    <RadioButton value="-1">全部含已归档</RadioButton>
-                    <RadioButton value="0">未归档</RadioButton>
-                </RadioGroup>
-                <Search className={[styles.extraContentSearch,styles.extraContentSearchGap]} placeholder="请输入" onSearch={() => ({})} />
-            </div>
-        );
-    }
+        </Button>
+        <RadioGroup defaultValue={cmpIsFinished === -1?"-1":"0"} className={styles.extraContentSearchGap} onChange={this.toggleFinished}>
+          <RadioButton value="-1">全部含完成</RadioButton>
+          <RadioButton value="0">待办</RadioButton>
+        </RadioGroup>
+        <RadioGroup defaultValue={cmpIsArchived === -1?"-1":"0"} onChange={this.toggleArchived} className={styles.extraContentSearchGap}>
+          <RadioButton value="-1">全部含已归档</RadioButton>
+          <RadioButton value="0">未归档</RadioButton>
+        </RadioGroup>
+        <Search value={this.state.keywordStr} className={[styles.extraContentSearch,styles.extraContentSearchGap]} placeholder="请输入" onChange={this.changeKeyword} onSearch={(query) => {this.searchTag(query)}} />
+      </div>
+        )
 
 
     const ListContent = ({ data: {id, taskName, createdTime,endTime,status,cate,tagIds,priority,isArchived,remark,sort } ,itemIndex}) => (
@@ -520,6 +519,36 @@ requestAgain() {
         });
 
         setTimeout(() => this.requestAgain(), 200);
+    }
+
+    toggleArchived = (e) => {
+      console.log(`radio checked:${e.target.value}`)
+        const { dispatch} = this.props;
+        dispatch({
+            type: 'task/toggleArchived',
+            payload: {
+                isArchived:e.target.value
+            },
+        });
+
+        setTimeout(() => this.requestAgain(), 200);
+    }
+
+    searchTag = (keyword) =>{
+        const { dispatch} = this.props;
+        dispatch({
+            type: 'task/keywordChange',
+            payload: {
+                keyword
+            },
+        });
+        this.setState({keywordStr:keyword});
+
+        setTimeout(() => this.requestAgain(), 200);
+    }
+
+    changeKeyword = (e) => {
+        this.setState({keywordStr:e.target.value})
     }
 }
 
