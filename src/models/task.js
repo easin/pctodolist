@@ -15,10 +15,11 @@ export default {
 
   effects: {
       *fetchTodayTaskList({ payload }, { call, put }) {
+          // payload.isArchived=0
           const result = yield call(queryPage,payload);
           if(result.success)
           {
-              console.log('xxxxxxx')
+
               result.object.cate=0;
               yield put({
                   type: 'appendTaskPage',
@@ -39,7 +40,7 @@ export default {
           }
 
       },
-      *fetchArchivTaskList({ payload }, { call, put }) {
+      *fetchArchiveTaskList({ payload }, { call, put }) {
           const result = yield call(queryPage,payload);
           if(result.success)
           {

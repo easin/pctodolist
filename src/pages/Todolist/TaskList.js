@@ -55,15 +55,17 @@ class TaskList extends PureComponent {
 
 
   handleInfiniteOnLoad = (cate) => {
-      const { keyword,isFinished,isArchived,dispatch,task:{todayTaskPage:{pageNo,totalPage,pageSize}} } = this.props;
+      const { dispatch,task:{todayTaskPage:{pageNo,totalPage,pageSize},keyword,isFinished,isArchived} } = this.props;
       const  requestType=`task/fetch${cate}TaskList`;
+      console.log(requestType)
+      const newisArchived=cate === 'Archive'? isArchived:0
       if(pageNo<totalPage)
       {
           dispatch({
               type: requestType,
               payload: {
                   pageNo:pageNo+1,
-                  pageSize,keyword,isFinished,isArchived
+                  pageSize,keyword,isFinished,isArchived:newisArchived
               },
           });
       }
@@ -76,30 +78,29 @@ class TaskList extends PureComponent {
   }
 
 requestAgain() {
-    const {keyword, isFinished, isArchived, task: {todayTaskPage: { pageSize}}, dispatch} = this.props;
-    console.log(this.props)
-    dispatch({
-        type: 'task/fetchTodayTaskList',
-        payload: {
-            pageNo:1,
-            pageSize, keyword, isFinished, isArchived
-        },
-    });
-    //
+    const { task: {todayTaskPage: { pageSize}, keyword, isFinished, isArchived},dispatch} = this.props;
+    // dispatch({
+    //     type: 'task/fetchTodayTaskList',
+    //     payload: {
+    //         pageNo:1,
+    //         pageSize, keyword, isFinished, isArchived:0,cate:0
+    //     },
+    // });
+    // //
     // dispatch({
     //     type: 'task/fetchWeekTaskList',
     //     payload: {
     //         pageNo:1,
-    //         pageSize, keyword, isFinished, isArchived
+    //         pageSize, keyword, isFinished,  isArchived:0,cate:1
     //     },
     // });
-    // dispatch({
-    //     type: 'task/fetchArchiveTaskList',
-    //     payload: {
-    //         pageNo:1,
-    //         pageSize, keyword, isFinished, isArchived
-    //     },
-    // });
+    dispatch({
+        type: 'task/fetchArchiveTaskList',
+        payload: {
+            pageNo:1,
+            pageSize, keyword, isFinished, isArchived,cate:-1
+        },
+    });
 }
 
     showModal = () => {
@@ -170,6 +171,7 @@ requestAgain() {
 
   render() {
 
+      console.log(this.props)
 
     // const {
     //   `task.todayTaskPage`: { todayTaskPage },
@@ -502,18 +504,7 @@ requestAgain() {
                         </InfiniteScroll>
                       </div>
                     </div>
-                    <Modal
-                      title={done ? null : `任务${current ? '编辑' : '添加'}`}
-                      className={styles.standardListForm}
-                      width={1024}
-                      style={{top:10}}
-                      bodyStyle={done ? { marginTop:72 } : { marginTop:10}}
-                      destroyOnClose
-                      visible={visible}
-                      {...modalFooter}
-                    >
-                      {getModalContent()}
-                    </Modal>
+
 
                   </Col>
 
@@ -524,10 +515,22 @@ requestAgain() {
               </div>
 
 
-
+              <Modal
+                title={done ? null : `任务${current ? '编辑' : '添加'}`}
+                className={styles.standardListForm}
+                width={1024}
+                style={{top:10}}
+                bodyStyle={done ? { marginTop:72 } : { marginTop:10}}
+                destroyOnClose
+                visible={visible}
+                {...modalFooter}
+              >
+                {getModalContent()}
+              </Modal>
 
             </Col>
           </Row>
+
         </GridContent>
 
       )
