@@ -231,11 +231,11 @@ requestAgain() {
         >
               添加待办
         </Button>
-        <RadioGroup defaultValue="-1" className={styles.extraContentSearchGap}>
+        <RadioGroup defaultValue="-1" className={styles.extraContentSearchGap} onChange={()=>this.taggleFinish()} >
           <RadioButton value="-1">全部含完成</RadioButton>
           <RadioButton value="0">待办</RadioButton>
         </RadioGroup>
-        <RadioGroup defaultValue="all" className={styles.extraContentSearchGap}>
+        <RadioGroup defaultValue="-1" className={styles.extraContentSearchGap}>
           <RadioButton value="-1">全部含已归档</RadioButton>
           <RadioButton value="0">未归档</RadioButton>
         </RadioGroup>
@@ -301,22 +301,7 @@ requestAgain() {
       </Dropdown>
     );
 
-    const getModalContent = () => 
-      // if (done) {
-      //   return (
-      //     <Result
-      //       type="success"
-      //       title="操作成功"
-      //       description="一系列的信息描述，很短同样也可以带标点。"
-      //       actions={
-      //         <Button type="primary" onClick={this.handleDone}>
-      //           知道了
-      //         </Button>
-      //       }
-      //       className={styles.formResult}
-      //     />
-      //   );
-      // }
+    const getModalContent = () =>
        (
          <Form onSubmit={this.handleSubmit}>
            <FormItem {...this.formLayout} label="任务">
@@ -519,6 +504,9 @@ requestAgain() {
       ;
   }
 
+    taggleFinish() {
+
+    }
 }
 
 export default TaskList;
