@@ -77,7 +77,7 @@ class TaskList extends PureComponent {
 
 requestAgain() {
     const {keyword, isFinished, isArchived, task: {todayTaskPage: { pageSize}}, dispatch} = this.props;
-
+    console.log(this.props)
     dispatch({
         type: 'task/fetchTodayTaskList',
         payload: {
@@ -85,21 +85,21 @@ requestAgain() {
             pageSize, keyword, isFinished, isArchived
         },
     });
-
-    dispatch({
-        type: 'task/fetchWeekTaskList',
-        payload: {
-            pageNo:1,
-            pageSize, keyword, isFinished, isArchived
-        },
-    });
-    dispatch({
-        type: 'task/fetchArchiveTaskList',
-        payload: {
-            pageNo:1,
-            pageSize, keyword, isFinished, isArchived
-        },
-    });
+    //
+    // dispatch({
+    //     type: 'task/fetchWeekTaskList',
+    //     payload: {
+    //         pageNo:1,
+    //         pageSize, keyword, isFinished, isArchived
+    //     },
+    // });
+    // dispatch({
+    //     type: 'task/fetchArchiveTaskList',
+    //     payload: {
+    //         pageNo:1,
+    //         pageSize, keyword, isFinished, isArchived
+    //     },
+    // });
 }
 
     showModal = () => {

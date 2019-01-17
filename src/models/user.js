@@ -86,8 +86,8 @@ export default {
       if (payload.success) {
         setAuthority('admin');
         localStorage.setItem('user', JSON.stringify(payload.object));
-        localStorage.setItem('userId', payload.object.userId);
-        localStorage.setItem('token', payload.object.message);
+        localStorage.setItem('userId', payload.object.id);
+        localStorage.setItem('token', payload.message);
       } else {
         // setAuthority('admin');
         // localStorage.setItem("user",JSON.stringify(payload.object));

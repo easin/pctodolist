@@ -78,7 +78,7 @@ class BasicLayout extends React.PureComponent {
     // After changing to phone mode,
     // if collapsed is true, you need to click twice to display
     const { collapsed, isMobile } = this.props;
-    console.log('c:'+collapsed)
+    // console.log('c:'+collapsed)
     if (isMobile && !preProps.isMobile && !collapsed) {
       this.handleMenuCollapse(false);
     }
@@ -132,7 +132,7 @@ class BasicLayout extends React.PureComponent {
   getLayoutStyle = () => {
 
     const { fixSiderbar, isMobile, collapsed, layout } = this.props;
-      console.log('getLayoutStyle'+collapsed)
+      // console.log('getLayoutStyle'+collapsed)
     if (fixSiderbar && layout !== 'topmenu' && !isMobile) {
       return {
         // paddingLeft: collapsed ? '80px' : '256px',
@@ -142,10 +142,10 @@ class BasicLayout extends React.PureComponent {
     return null;
   };
 
-  handleMenuCollapse = collapsed => {//每点击是不会触发的
+  handleMenuCollapse = collapsed => {// 每点击是不会触发的
     const { dispatch } = this.props;
-    console.log('xxxxxxxxwwwwwwwwww')
-    console.log(this.props)
+    // console.log('xxxxxxxxwwwwwwwwww')
+    // console.log(this.props)
     dispatch({
       type: 'global/changeLayoutCollapsed',
       payload: collapsed,

@@ -2,6 +2,7 @@ import fetch from 'dva/fetch';
 import { notification } from 'antd';
 import router from 'umi/router';
 import hash from 'hash.js';
+import qs from 'qs'
 import { isAntdPro } from './utils';
 
 const codeMessage = {
@@ -63,7 +64,7 @@ const cachedSave = (response, hashcode) => {
  * @param  {object} [option] The options we want to pass to "fetch"
  * @return {object}           An object containing either "data" or "err"
  */
-export default function request(url, option) {
+export default async function request(url, option) {
   const options = {
     expirys: isAntdPro(),
     ...option,
@@ -116,6 +117,7 @@ export default function request(url, option) {
     {
         delete newOptions.header;
     }
+    const userId= await localStorage.getItem('userId');
     const isJson =
       typeof obj === 'object' &&
       Object.prototype.toString.call(newOptions.body).toLowerCase() === '[object object]' &&
@@ -126,6 +128,7 @@ export default function request(url, option) {
         'Content-Type': 'application/json; charset=utf-8', // 默认先都表单提单
         ...newOptions.headers,
       };
+      newOptions.body.userId=userId;
       newOptions.body = JSON.stringify(newOptions.body);
       console.log('json request');
     } else {
@@ -136,6 +139,10 @@ export default function request(url, option) {
         'Content-Type': 'application/x-www-form-urlencoded',
         ...newOptions.headers,
       };
+        const newData=qs.parse(newOptions.body);
+        newData.userId=userId;
+        // console.log(newData);
+        newOptions.body=qs.stringify(newData);
     }
     console.log(newOptions.body);
     // 接着在这里继续加token
