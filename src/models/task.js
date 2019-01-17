@@ -60,6 +60,13 @@ export default {
           }
 
       },
+      *toggleFinished({ payload }, { put }) {
+          yield put({
+              type: 'toggleFinishedState',
+              payload,
+          });
+
+      },
   },
 
   reducers: {
@@ -88,6 +95,9 @@ export default {
               case 1:return {...state,weekTaskPage: action.payload};
               default: return {...state,archiveTaskPage: action.payload};
           }
+      },toggleFinishedState(state, action) {
+          console.log(action.payload)
+          return {...state,isFinished: parseInt(action.payload.isFinished)};
       },
   },
 };

@@ -83,13 +83,14 @@ class TaskList extends PureComponent {
       // ReactDOM.findDOMNode(body).scrollTo(0, top - 50);
   }
 
-requestAgain() {
+requestAgain(_isFinished,_isArchived) {
     const { task: {todayTaskPage: { pageSize}, keyword, isFinished, isArchived},dispatch} = this.props;
+    _isFinished=_isArchived === undefined?isFinished:_isFinished;
     dispatch({
         type: 'task/fetchTodayTaskList',
         payload: {
             pageNo:1,
-            pageSize, keyword, isFinished, isArchived:0,cate:0
+            pageSize, keyword, isFinished:_isFinished, isArchived:0,cate:0
         },
     });
     //
@@ -97,14 +98,14 @@ requestAgain() {
         type: 'task/fetchWeekTaskList',
         payload: {
             pageNo:1,
-            pageSize, keyword, isFinished,  isArchived:0,cate:1
+            pageSize, keyword, isFinished:_isFinished,  isArchived:0,cate:1
         },
     });
     dispatch({
         type: 'task/fetchArchiveTaskList',
         payload: {
             pageNo:1,
-            pageSize, keyword, isFinished, isArchived,cate:-1
+            pageSize, keyword, isFinished:_isFinished, isArchived,cate:-1
         },
     });
 }
@@ -186,7 +187,8 @@ requestAgain() {
     //   console.log(1111111)
       // const {todayTaskPage: { todayTaskPage }}= this.props;
       // console.log(todayTaskPage)
-      const {task: { todayTaskPage,weekTaskPage,archiveTaskPage },todayLoading,weekLoading,archiveLoading}= this.props;
+      const {task: { todayTaskPage,weekTaskPage,archiveTaskPage,isFinished,isArchived },todayLoading,weekLoading,archiveLoading}= this.props;
+      console.log(isFinished+'******'+todayLoading)
     const {
       form: { getFieldDecorator },
     } = this.props;
@@ -215,36 +217,40 @@ requestAgain() {
       </div>
     );
 
-    const extraContent = (
-      <div className={styles.extraContent}>
+    const SearchFilterExtraContent = ({cmpIsFinished,cmpIsArchived}) => {
+        console.log('-->' +cmpIsArchived)
+        return (
 
-        <Button
-          type="primary"
-          icon="plus"
+            <div className={styles.extraContent}>
 
-          onClick={this.showModal}
-          ref={component => {
-                      /* eslint-disable */
-                      this.addBtn = findDOMNode(component);
-                      /* eslint-enable */
-                  }}
-        >
-              添加待办
-        </Button>
-        <RadioGroup defaultValue="-1" className={styles.extraContentSearchGap} onChange={()=>this.taggleFinish()} >
-          <RadioButton value="-1">全部含完成</RadioButton>
-          <RadioButton value="0">待办</RadioButton>
-        </RadioGroup>
-        <RadioGroup defaultValue="-1" className={styles.extraContentSearchGap}>
-          <RadioButton value="-1">全部含已归档</RadioButton>
-          <RadioButton value="0">未归档</RadioButton>
-        </RadioGroup>
-        <Search className={[styles.extraContentSearch,styles.extraContentSearchGap]} placeholder="请输入" onSearch={() => ({})} />
-      </div>
-    );
+                <Button
+                    type="primary"
+                    icon="plus"
+
+                    onClick={this.showModal}
+                    ref={component => {
+                        /* eslint-disable */
+                        this.addBtn = findDOMNode(component);
+                        /* eslint-enable */
+                    }}
+                >
+                    添加待办
+                </Button>
+                <RadioGroup defaultValue={cmpIsFinished === -1?"-1":"0"} className={styles.extraContentSearchGap} onChange={this.toggleFinished}>
+                    <RadioButton value="-1">全部含完成</RadioButton>
+                    <RadioButton value="0">待办</RadioButton>
+                </RadioGroup>
+                <RadioGroup defaultValue={cmpIsArchived === -1?"-1":"0"} className={styles.extraContentSearchGap}>
+                    <RadioButton value="-1">全部含已归档</RadioButton>
+                    <RadioButton value="0">未归档</RadioButton>
+                </RadioGroup>
+                <Search className={[styles.extraContentSearch,styles.extraContentSearchGap]} placeholder="请输入" onSearch={() => ({})} />
+            </div>
+        );
+    }
 
 
-    const ListContent = ({ data: {id, taskName, createdTime,endTime,status,cate,tagIds,priority, isArchived,remark,sort } ,itemIndex}) => (
+    const ListContent = ({ data: {id, taskName, createdTime,endTime,status,cate,tagIds,priority,isArchived,remark,sort } ,itemIndex}) => (
 
       <div className={[styles.listContent]}>
 
@@ -312,7 +318,7 @@ requestAgain() {
            </FormItem>
            <FormItem label="结束时间" {...this.formLayout}>
              {getFieldDecorator('endTime', {
-              rules: [{ required: true, message: '请选择结束时间' }],
+              rules: [{ required: false, message: '请选择结束时间' }],
               initialValue: current.endTime ? moment(current.endTime) : null,
             })(
               <DatePicker
@@ -325,7 +331,7 @@ requestAgain() {
            </FormItem>
            <FormItem label="优先级别" {...this.formLayout}>
              {getFieldDecorator('priority', {
-              rules: [{ required: true, message: '请选择级别' }],
+              rules: [{ required: false, message: '请选择级别' }],
               initialValue: current.priority,
             })(
               <Select placeholder="请选择">
@@ -340,8 +346,8 @@ requestAgain() {
 
            <FormItem label="排序" {...this.formLayout}>
              {getFieldDecorator('sort', {
-                    rules: [{ required: true, message: '请选择级别' }],
-                    initialValue: current.sort,
+                    rules: [{ required: false, message: '请选择级别' }],
+                    initialValue: current.sort||50,
                 })(
                   <Input placeholder="请输入" />
                 )}
@@ -367,7 +373,7 @@ requestAgain() {
                   title="我的待办"
                   style={{ marginTop: 0 }}
                   bodyStyle={{ padding: '0 0 0 0' }}
-                  extra={extraContent}
+                  extra={(<SearchFilterExtraContent cmpIsFinished={isFinished} cmpIsArchived={isArchived} />)}
                 >
 
                   <Col lg={8} md={24}>
@@ -504,8 +510,17 @@ requestAgain() {
       ;
   }
 
-    taggleFinish() {
+    toggleFinished = (e) => {
+      console.log(`radio checked:${e.target.value}`)
+        const { dispatch} = this.props;
+        dispatch({
+            type: 'task/toggleFinished',
+            payload: {
+                isFinished:e.target.value
+            },
+        });
 
+        setTimeout(() => this.requestAgain(e.target.value,-1), 200);
     }
 }
 
