@@ -246,11 +246,12 @@ requestAgain() {
           <RadioButton value="-1">全部含已归档</RadioButton>
           <RadioButton value="0">未归档</RadioButton>
         </RadioGroup>
-        <Search autoFocus key="searchBar" value={this.state.keywordStr} className={[styles.extraContentSearch,styles.extraContentSearchGap]} placeholder="请输入"  ref={component => {
+        <Search key="searchBar" className={[styles.extraContentSearch,styles.extraContentSearchGap]} placeholder="请输入"  ref={component => {
             /* eslint-disable */
             this.searchBtn = findDOMNode(component);
             /* eslint-enable */
-        }} onSearch={(query) => {this.searchTag(query)}} onChange={this.changeKeyword} />
+            /* value={this.state.keywordStr}  onChange={(e)=>this.changeKeyword.bind(this,e)} onSearch={(query) => {this.searchTag.bind(this,query)}}  */
+        }} onSearch={(query) => {this.searchTag(query)}}  />
       </div>
         )
 
@@ -357,11 +358,11 @@ requestAgain() {
                   <Input placeholder="请输入" />
                 )}
            </FormItem>
-           <FormItem label="备忘" {...this.formLayout}>
+           <FormItem label="备注" {...this.formLayout}>
              {getFieldDecorator('remark', {
-                    rules: [{ required: true, remark: '其他备注' }],
+                    rules: [{ required: false, remark: '其他备注' }],
                     initialValue: current.remark,
-                })(<TextArea rows={4} placeholder="请输入至少五个字符" />)}
+                })(<TextArea rows={4} placeholder="任务备注" />)}
            </FormItem>
          </Form>
       )
@@ -375,7 +376,7 @@ requestAgain() {
                 <Card
                   className={styles.listCard}
                   bordered={false}
-                  title="我的待办"
+                  title={"我的待办【"+keyword+"】"}
                   style={{ marginTop: 0 }}
                   bodyStyle={{ padding: '0 0 0 0' }}
                   extra={(<SearchFilterExtraContent cmpIsFinished={isFinished} cmpIsArchived={isArchived} />)}
