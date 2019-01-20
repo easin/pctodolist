@@ -15,8 +15,11 @@ export async function save(params) {
     });
 }
 
-export async function queryCurrent() {
-  return request('/api/currentUser');
+export async function listTags(params) {
+    return request('/api/tag/list',{
+        method:'POST',
+        body:stringify(params),
+    });
 }
 
 export async function login(params) {

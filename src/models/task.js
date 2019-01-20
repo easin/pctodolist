@@ -1,4 +1,4 @@
-import { queryPage,save } from '@/services/task';
+import { queryPage,save,listTags } from '@/services/task';
 import _ from "lodash";
 
 export default {
@@ -10,12 +10,14 @@ export default {
       archiveTaskPage: {pageNo:1,pageSize:10,list:[]},
       isFinished:0,// 0未完成,1已完成，-1所有
       isArchived:-1,// 0未归档,1归档，-1所有
-      keyword:''
+      keyword:'',
+      allTagIds:[]
   },
 
   effects: {
       *fetchTodayTaskList({ payload }, { call, put }) {
           // payload.isArchived=0
+          payload.orderBy=" sort,add_date,update_time desc"
           const result = yield call(queryPage,payload);
           if(result.success)
           {
@@ -60,18 +62,26 @@ export default {
           }
 
       },
-      *toggleFinished({ payload }, { put }) {
+      *toggleFinishedShow({ payload }, { put }) {
           yield put({
               type: 'toggleFinishedState',
               payload,
           });
 
       },
-      *toggleArchived({ payload }, { put }) {
+      *toggleArchivedShow({ payload }, { put }) {
           yield put({
               type: 'toggleArchivedState',
               payload,
           });
+      },
+      *listAllTags({ payload }, { call,put }) {
+          const result = yield call(listTags,payload);
+          yield put({
+              type: 'listAllTagsArr',
+              payload: result,
+          });
+
       },
       *keywordChange({ payload }, { put }) {
           yield put({
@@ -117,9 +127,9 @@ export default {
       },toggleArchivedState(state, action) {
           console.log(action.payload)
           return {...state,isArchived: parseInt(action.payload.isArchived)};
-      },keywordChangeState(state, action) {
+      },listAllTagsArr(state, action) {
           console.log(action.payload)
-          return {...state,keyword: action.payload.keyword};
+          return {...state,allTagIds: action.payload};
       },
   },
 };

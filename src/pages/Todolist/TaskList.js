@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import { findDOMNode } from 'react-dom';
 import moment from 'moment';
 import { connect } from 'dva';
+import _ from 'lodash';
 import {
   List,
   Card,
@@ -81,11 +82,18 @@ class TaskList extends PureComponent {
       // // body.scrollTo(0,  - 50);
       // this.addBtn.scrollTo(0, -50);
       // ReactDOM.findDOMNode(body).scrollTo(0, top - 50);
-      const { task: { keyword}} = this.props;
+      const { task: { allTagIds},dispatch} = this.props;
+
       // this.setState({keywordStr:keyword})
-      console.log(keyword)
-      console.log(this.searchBtn)
-      this.searchBtn.value=keyword;
+      // console.log(keyword)
+      // console.log(this.searchBtn)
+      // this.searchBtn.value=keyword;
+      if(allTagIds.length==0)
+      {
+          dispatch({
+              type: 'task/listAllTags',
+          });
+      }
   }
 
 requestAgain() {
@@ -157,6 +165,13 @@ requestAgain() {
       {
           fieldsValue.endTime=fieldsValue.endTime.format("YYYY-MM-DD HH:mm:ss");
       }
+      if(fieldsValue.tagIds&&fieldsValue.tagIds.length>0)
+      {
+          fieldsValue.tagIds=fieldsValue.tagIds.join(',');
+      }
+      else {
+          fieldsValue.tagIds=undefined;
+      }
 
       this.setState({
         done: true, visible: false,
@@ -184,119 +199,188 @@ requestAgain() {
 
       console.log(this.props)
 
-    // const {
-    //   `task.todayTaskPage`: { todayTaskPage },
-    //   loading,
-    // } = this.props;
-    //   console.log(1111111)
+      // const {
+      //   `task.todayTaskPage`: { todayTaskPage },
+      //   loading,
+      // } = this.props;
+      //   console.log(1111111)
       // const {todayTaskPage: { todayTaskPage }}= this.props;
       // console.log(todayTaskPage)
-      const {task: { todayTaskPage,weekTaskPage,archiveTaskPage,isFinished,isArchived,keyword },todayLoading,weekLoading,archiveLoading}= this.props;
-      console.log(`${isFinished}******${todayLoading}${keyword}`)
-    const {
-      form: { getFieldDecorator },
-    } = this.props;
-    const { visible, done, current = {} } = this.state;
+      const {task: {todayTaskPage, weekTaskPage, archiveTaskPage, isFinished, isArchived, keyword, allTagIds}, todayLoading, weekLoading, archiveLoading} = this.props;
+      // console.log(`${isFinished}******${todayLoading}${keyword}`)
+      const Option = Select.Option;
 
-    const editAndDelete = (key, currentItem) => {
-      if (key === 'edit') this.showEditModal(currentItem);
-      else if (key === 'delete') {
-        Modal.confirm({
-          title: '删除备忘',
-          content: '确定删除该备忘吗？',
-          okText: '确认',
-          cancelText: '取消',
-          onOk: () => this.deleteItem(currentItem.id),
-        });
+      const children = [];
+      for (let i = 0; i < allTagIds.length; i++) {
+          children.push(<Option key={allTagIds[i].tagName}>{allTagIds[i].tagName}</Option>);
       }
-    };
+      const {
+          form: {getFieldDecorator},
+      } = this.props;
+      const {visible, done, current = {}} = this.state;
 
-    const modalFooter = { okText: '保存', onOk: this.handleSubmit, onCancel: this.handleCancel };
+      const editAndDelete = (key, currentItem) => {
+          if (key === 'edit') this.showEditModal(currentItem);
+          else if (key === 'delete') {
+              Modal.confirm({
+                  title: '删除备忘',
+                  content: '确定删除该备忘吗？',
+                  okText: '确认',
+                  cancelText: '取消',
+                  onOk: () => this.deleteItem(currentItem.id),
+              });
+          }
+      };
 
-    const Info = ({ title, value, bordered }) => (
-      <div className={styles.headerInfo}>
-        <span>{title}</span>
-        <p>{value}</p>
-        {bordered && <em />}
-      </div>
-    );
+      const modalFooter = {okText: '保存', onOk: this.handleSubmit, onCancel: this.handleCancel};
 
-    const SearchFilterExtraContent = ({cmpIsFinished,cmpIsArchived,keywordStr}) => (
-
-      <div className={styles.extraContent}>
-
-        <Button
-          type="primary"
-          icon="plus"
-
-          onClick={this.showModal}
-          ref={component => {
-                        /* eslint-disable */
-                        this.addBtn = findDOMNode(component);
-                        /* eslint-enable */
-                    }}
-        >
-                    添加待办
-        </Button>
-        <RadioGroup defaultValue={cmpIsFinished === -1?"-1":"0"} className={styles.extraContentSearchGap} onChange={this.toggleFinished}>
-          <RadioButton value="-1">全部含完成</RadioButton>
-          <RadioButton value="0">待办</RadioButton>
-        </RadioGroup>
-        <RadioGroup defaultValue={cmpIsArchived === -1?"-1":"0"} onChange={this.toggleArchived} className={styles.extraContentSearchGap}>
-          <RadioButton value="-1">全部含已归档</RadioButton>
-          <RadioButton value="0">未归档</RadioButton>
-        </RadioGroup>
-        <Search key="searchBar" className={[styles.extraContentSearch,styles.extraContentSearchGap]} placeholder="请输入"  ref={component => {
-            /* eslint-disable */
-            this.searchBtn = findDOMNode(component);
-            /* eslint-enable */
-            /* value={this.state.keywordStr}  onChange={(e)=>this.changeKeyword.bind(this,e)} onSearch={(query) => {this.searchTag.bind(this,query)}}  */
-        }} onSearch={(query) => {this.searchTag(query)}}  />
-      </div>
-        )
-
-
-    const ListContent = ({ data: {id, taskName, createdTime,endTime,status,cate,tagIds,priority,isArchived,remark,sort } ,itemIndex}) => (
-
-      <div className={[styles.listContent]}>
-
-
-        <div className={[styles.listContentItem,styles.line]}>
-          <div className={styles.line}>{itemIndex}. {taskName}</div>
+      const Info = ({title, value, bordered}) => (
+        <div className={styles.headerInfo}>
+          <span>{title}</span>
+          <p>{value}</p>
+          {bordered && <em />}
         </div>
+      );
 
-        <div className={styles.listContentItem}>
-          <p>{moment(createdTime).format('YYYY-MM-DD')}</p>
-        </div>
-        <div className={styles.listContentItem}>
-          <p>{isArchived===0?'未归档':'已归档'}
+      const SearchFilterExtraContent = ({cmpIsFinished, cmpIsArchived, keywordStr}) => (
 
+        <div className={styles.extraContent}>
 
-            <Icon type="calendar" onClick={()=>{alert(2)}} />
-            <Icon type="calendar" onClick={()=>{alert(2)}} />
-            <Icon type="calendar" onClick={()=>{alert(2)}} />
-          </p>
+          <Button
+            type="primary"
+            icon="plus"
 
-
-        </div>
-
-        <div className={styles.listContentItem}>
-          <p>{status===0?(<Icon type="check" />):'已归档'}</p>
-        </div>
-        <div className={styles.listContentItem}>
-          <p><a
-            onClick={e => {
-                      e.preventDefault();
-                      const data={id, taskName, createdTime,endTime,status,cate,tagIds,priority, isArchived,remark,sort }
-                      this.showEditModal(data);
+            onClick={this.showModal}
+            ref={component => {
+                      /* eslint-disable */
+                      this.addBtn = findDOMNode(component);
+                      /* eslint-enable */
                   }}
-          >编辑
-          </a>
-          </p>
+          >
+                  添加待办
+          </Button>
+          <RadioGroup
+            defaultValue={cmpIsFinished === -1 ? "-1" : "0"}
+            className={styles.extraContentSearchGap}
+            onChange={this.toggleFinishedShow}
+          >
+            <RadioButton value="-1">全部含完成</RadioButton>
+            <RadioButton value="0">待办</RadioButton>
+          </RadioGroup>
+          <RadioGroup
+            defaultValue={cmpIsArchived === -1 ? "-1" : "0"}
+            onChange={this.toggleArchivedShow}
+            className={styles.extraContentSearchGap}
+          >
+            <RadioButton value="-1">全部含已归档</RadioButton>
+            <RadioButton value="0">未归档</RadioButton>
+          </RadioGroup>
+          <Search
+            key="searchBar"
+            className={[styles.extraContentSearch, styles.extraContentSearchGap]}
+            placeholder={_.map(allTagIds, 'tagName').join(',')}
+            ref={component => {
+                  /* eslint-disable */
+                  this.searchBtn = findDOMNode(component);
+                  /* eslint-enable */
+                  /* value={this.state.keywordStr}  onChange={(e)=>this.changeKeyword.bind(this,e)} onSearch={(query) => {this.searchTag.bind(this,query)}}  */
+              }}
+            onSearch={(query) => {
+                  this.searchTag(query)
+              }}
+          />
         </div>
+      )
 
-      </div>
-    );
+
+      const ListContent = ({data: {id, taskName, createTime, endTime, status, cate, tagIds, priority, isArchived, remark, sort}, itemIndex}) => {
+          const createTimeStr=moment(createTime, "YYYY-MM-DD HH:mm:ss").format("MM-DD");
+          const spanTime=endTime?(`${createTimeStr}~${moment(endTime, "YYYY-MM-DD HH:mm:ss").format("MM-DD")}`):createTimeStr
+
+          return (
+
+            <div className={[styles.listContent]}>
+
+
+              <div className={[styles.listContentItem, styles.line]}>
+                <div className={styles.line} style={{ textDecorationLine: status === 1?'line-through' :'none'}}>{itemIndex}. {taskName}</div>
+              </div>
+
+              <div className={styles.listContentItem}>
+                <p>{tagIds}{spanTime}</p>
+              </div>
+              <div className={styles.listContentItem}>
+                <p>{isArchived === 0 ? (<Icon
+                  type="copy"
+                  onClick={() => {
+                      this.toggleArchived(id,isArchived);
+                  }}
+                />) : (<Icon
+                  className={styles.chose}
+                  type="copy"
+                  onClick={() => {
+                                 this.toggleArchived(id,isArchived);
+                             }}
+                />)}
+
+
+                  <Icon
+                    type="ordered-list"
+                    className={cate === 0 ? styles.chose : styles.none}
+                    onClick={() => {
+                          this.toggleCate(id,cate);
+                      }}
+                  />
+                  <Icon
+                    type="calendar"
+                    className={cate === 1 ? styles.chose : styles.none}
+                    onClick={() => {
+                        this.toggleCate(id,cate);
+                      }}
+                  />
+                  {status === 0 ? (<Icon
+                    type="clock-circle"
+                    onClick={() => {
+                          this.toggleFinished(id,status);
+                      }}
+                  />) : (<Icon
+                    type="check"
+                    onClick={() => {
+                        this.toggleFinished(id,status);
+                      }}
+                  />)}
+
+                </p>
+
+
+              </div>
+              <div className={styles.listContentItem}>
+                <p><a
+                  onClick={e => {
+                          e.preventDefault();
+                          const data = {
+                              id,
+                              taskName,
+                              createTime,
+                              endTime,
+                              status,
+                              cate,
+                              tagIds,
+                              priority,
+                              isArchived,
+                              remark,
+                              sort
+                          }
+                          this.showEditModal(data);
+                      }}
+                >编辑
+                </a>
+                </p>
+              </div>
+
+            </div>
+      );
+  }
 
     const MoreBtn = props => (
       <Dropdown
@@ -318,9 +402,18 @@ requestAgain() {
          <Form onSubmit={this.handleSubmit}>
            <FormItem {...this.formLayout} label="任务">
              {getFieldDecorator('taskName', {
-                    rules: [{ message: '请输入至少五个字符的产品描述！', min: 5 }],
+                    rules: [{ message: '请输入至少五个字符的产品描述！',min:1}],
                     initialValue: current.taskName,
                 })(<TextArea rows={8} placeholder="请输入至少五个字符" />)}
+           </FormItem>
+           <FormItem {...this.formLayout} label="任务">
+             {getFieldDecorator('tagIds', {
+                     initialValue: current.tagIds?current.tagIds.split(','):[],
+                 })((
+                   <Select placeholder="请选择标签" mode="tags">
+                     {children}
+                   </Select>
+                 ))}
            </FormItem>
            <FormItem label="结束时间" {...this.formLayout}>
              {getFieldDecorator('endTime', {
@@ -362,7 +455,7 @@ requestAgain() {
              {getFieldDecorator('remark', {
                     rules: [{ required: false, remark: '其他备注' }],
                     initialValue: current.remark,
-                })(<TextArea rows={4} placeholder="任务备注" />)}
+                })(<TextArea rows={3} placeholder="任务备注" />)}
            </FormItem>
          </Form>
       )
@@ -376,7 +469,7 @@ requestAgain() {
                 <Card
                   className={styles.listCard}
                   bordered={false}
-                  title={"我的待办【"+keyword+"】"}
+                  title={`我的待办[${keyword}]`}
                   style={{ marginTop: 0 }}
                   bodyStyle={{ padding: '0 0 0 0' }}
                   extra={(<SearchFilterExtraContent cmpIsFinished={isFinished} cmpIsArchived={isArchived} />)}
@@ -499,7 +592,7 @@ requestAgain() {
                 className={styles.standardListForm}
                 width={1024}
                 style={{top:10}}
-                bodyStyle={done ? { marginTop:72 } : { marginTop:10}}
+                bodyStyle={done ? { marginTop:5 } : { marginTop:5}}
                 destroyOnClose
                 visible={visible}
                 {...modalFooter}
@@ -516,11 +609,11 @@ requestAgain() {
       ;
   }
 
-    toggleFinished = (e) => {
+    toggleFinishedShow = (e) => {
       console.log(`radio checked:${e.target.value}`)
         const { dispatch} = this.props;
         dispatch({
-            type: 'task/toggleFinished',
+            type: 'task/toggleFinishedShow',
             payload: {
                 isFinished:e.target.value
             },
@@ -529,11 +622,12 @@ requestAgain() {
         setTimeout(() => this.requestAgain(), 200);
     }
 
-    toggleArchived = (e) => {
+    toggleArchivedShow = (e) => {
+
       console.log(`radio checked:${e.target.value}`)
         const { dispatch} = this.props;
         dispatch({
-            type: 'task/toggleArchived',
+            type: 'task/toggleArchivedShow',
             payload: {
                 isArchived:e.target.value
             },
@@ -559,6 +653,49 @@ requestAgain() {
         e.preventDefault();
         this.setState({keywordStr:e.target.value})
         // setTimeout(() => this.searchBtn.focus(), 0);
+    }
+
+
+    toggleArchived = (id,isArchived) => {
+        isArchived=isArchived===0?1:0
+        const { dispatch} = this.props;
+        dispatch({
+            type: 'task/save',
+            payload: {
+                id,
+                isArchived
+            },
+        });
+
+        setTimeout(() => this.requestAgain(), 200);
+    }
+
+    toggleFinished = (id,isFinished) => {
+        const status=isFinished===0?1:0
+        const { dispatch} = this.props;
+        dispatch({
+            type: 'task/save',
+            payload: {
+                id,
+                status
+            },
+        });
+
+        setTimeout(() => this.requestAgain(), 200);
+    }
+
+    toggleCate = (id,cate) => {
+        cate=cate===0?1:0
+        const { dispatch} = this.props;
+        dispatch({
+            type: 'task/save',
+            payload: {
+                id,
+                cate
+            },
+        });
+
+        setTimeout(() => this.requestAgain(), 200);
     }
 }
 

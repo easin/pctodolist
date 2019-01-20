@@ -188,7 +188,7 @@ class AdvancedForm extends PureComponent {
                   {getFieldDecorator('owner', {
                     rules: [{ required: true, message: '请选择管理员' }],
                   })(
-                    <Select placeholder="请选择管理员">
+                    <Select placeholder="请选择管理员" mode="tags">
                       <Option value="xiao">付晓晓</Option>
                       <Option value="mao">周毛毛</Option>
                     </Select>
