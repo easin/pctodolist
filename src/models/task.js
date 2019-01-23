@@ -31,6 +31,7 @@ export default {
 
       },
       *fetchWeekTaskList({ payload }, { call, put }) {
+          payload.orderBy=" sort,add_date,update_time desc"
           const result = yield call(queryPage,payload);
           if(result.success)
           {
@@ -43,6 +44,7 @@ export default {
 
       },
       *fetchArchiveTaskList({ payload }, { call, put }) {
+          payload.orderBy=" sort,add_date desc,update_time desc"
           const result = yield call(queryPage,payload);
           if(result.success)
           {
