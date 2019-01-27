@@ -78,6 +78,8 @@ export default {
           });
       },
       *listAllTags({ payload }, { call,put }) {
+          // console.log('调用了')
+          // alert('调用了')
           const result = yield call(listTags,payload);
           yield put({
               type: 'listAllTagsArr',

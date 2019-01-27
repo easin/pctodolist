@@ -303,7 +303,7 @@ requestAgain() {
 
 
               <div className={[styles.listContentItem, styles.line]}>
-                <div className={styles.line} style={{ textDecorationLine: status === 1?'line-through' :'none'}}>{itemIndex}. {taskName}</div>
+                <div className={styles.line} style={{ textDecorationLine: status === 1?'line-through' :'none'}}><p dangerouslySetInnerHTML={{ __html: itemIndex+"."+taskName.replace(/\n/g,"<br/>") }}  /></div>
               </div>
 
               <div className={styles.listContentItem}>
