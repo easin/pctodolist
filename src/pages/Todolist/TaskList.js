@@ -475,7 +475,7 @@ requestAgain() {
                   extra={(<SearchFilterExtraContent cmpIsFinished={isFinished} cmpIsArchived={isArchived} />)}
                 >
 
-                  <Col lg={8} md={24}>
+                  <Col lg={12} md={24}>
                     <div className={[styles.standardList]}>
                       <div className={styles.taskContainer}>
                         <InfiniteScroll
@@ -492,7 +492,6 @@ requestAgain() {
                             dataSource={todayTaskPage.list}
                             renderItem={(item,index) => (
                               <List.Item>
-
                                 <ListContent data={item} itemIndex={index+1} />
                               </List.Item>
                                 )}
@@ -509,7 +508,7 @@ requestAgain() {
 
                   </Col>
 
-                  <Col lg={8} md={24}>
+                  <Col lg={12} md={24}>
                     <div className={[styles.standardList]}>
                       <div className={styles.taskContainer}>
                         <InfiniteScroll
@@ -542,46 +541,6 @@ requestAgain() {
                     </div>
 
                   </Col>
-
-
-
-                  <Col lg={8} md={24}>
-                    <div className={[styles.standardList]}>
-                      <div className={styles.taskContainer}>
-                        <InfiniteScroll
-                          initialLoad={false}
-                          pageStart={0}
-                          loadMore={()=>this.handleInfiniteOnLoad('Archive')}
-                          hasMore={!archiveLoading && archiveTaskPage.totalPage>archiveTaskPage.pageNo}
-                          useWindow={false}
-                        >
-                          <List
-                            size="small"
-                            rowKey="id"
-                            loading={archiveLoading}
-                            dataSource={archiveTaskPage.list}
-                            renderItem={(item,index) => (
-                              <List.Item>
-
-                                <ListContent data={item} itemIndex={index+1} />
-                              </List.Item>
-                                        )}
-                          >
-                            {archiveLoading && archiveTaskPage.totalPage>archiveTaskPage.pageNo && (
-                            <div className={styles.demoLoadingContainer}>
-                              <Spin />
-                            </div>
-                                        )}
-                          </List>
-                        </InfiniteScroll>
-                      </div>
-                    </div>
-
-
-                  </Col>
-
-
-
 
                 </Card>
               </div>

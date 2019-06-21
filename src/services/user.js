@@ -37,8 +37,7 @@ export async function query() {
 // }
 
 export async function queryCurrent() {
-  return request('/api/currentUser');
-  // return request('/api/user/currentUser');
+  return request('/api/user/currentUser');
 }
 
 export async function login(params) {
